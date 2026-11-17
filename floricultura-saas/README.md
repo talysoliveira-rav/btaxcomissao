@@ -24,7 +24,8 @@ Um usuário pode participar de várias floriculturas (seletor no menu lateral). 
 
 ### 1. Supabase
 1. Crie um projeto em [supabase.com](https://supabase.com) (região São Paulo).
-2. **SQL Editor → New query** → cole e rode `supabase/migrations/0001_schema.sql`.
+2. **SQL Editor → New query** → cole e rode, em ordem, o **conteúdo** de `supabase/migrations/0001_schema.sql` e `0002_security_hardening.sql`.
+   ⚠️ Use um projeto só do Florescer: o schema cria `profiles`, `is_admin()` e o trigger `on_auth_user_created`, que conflitam com outros sistemas no mesmo banco.
    (Ou, com a CLI: `supabase link` + `supabase db push`.)
 3. Em **Authentication → URL Configuration**, defina o *Site URL* (ex.: `http://localhost:3000` e depois o domínio da Vercel) e adicione `<site>/auth/callback` em *Redirect URLs*.
 4. Pegue a URL e a *anon key* em **Project Settings → API**.
