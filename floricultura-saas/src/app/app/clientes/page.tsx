@@ -1,3 +1,4 @@
+import { UserPlus, Users } from "lucide-react";
 import Link from "next/link";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
@@ -30,7 +31,13 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
             <Input name="q" defaultValue={sp.q} placeholder="Nome, telefone ou e-mail…" />
             <Button variant="secondary">Buscar</Button>
           </form>
-          {customers.length === 0 ? <Empty>Nenhum cliente encontrado.</Empty> : (
+          {customers.length === 0 ? sp.q ? (
+            <Empty>Nenhum cliente encontrado.</Empty>
+          ) : (
+            <Empty icon={Users} title="Nenhum cliente ainda">
+              Cadastre ao lado ou crie direto no pedido. Clientes novos também entram pelo formulário de pedido.
+            </Empty>
+          ) : (
             <Table>
               <thead><tr><th>Nome</th><th>Contato</th><th>Desde</th></tr></thead>
               <tbody>
@@ -51,7 +58,7 @@ export default async function CustomersPage({ searchParams }: { searchParams: Pr
             </Table>
           )}
         </Card>
-        <Card title="Novo cliente">
+        <Card icon={UserPlus} title="Novo cliente">
           <form action={createCustomer} className="space-y-3">
             <Field label="Nome"><Input name="name" required /></Field>
             <Field label="Telefone / WhatsApp"><Input name="phone" /></Field>

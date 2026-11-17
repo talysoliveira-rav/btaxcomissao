@@ -1,3 +1,4 @@
+import { ClipboardList, Columns3, Plus } from "lucide-react";
 import Link from "next/link";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
@@ -49,7 +50,7 @@ export default async function OrdersPage({
 
   return (
     <>
-      <PageHeader title="Pedidos" subtitle={`${count ?? 0} pedido(s)`} actions={<ButtonLink href="/app/pedidos/novo">+ Novo pedido</ButtonLink>} />
+      <PageHeader title="Pedidos" subtitle={`${count ?? 0} pedido(s)`} actions={<><ButtonLink variant="secondary" href="/app/producao"><Columns3 className="h-4 w-4" aria-hidden /> Quadro</ButtonLink><ButtonLink href="/app/pedidos/novo"><Plus className="h-4 w-4" aria-hidden /> Novo pedido</ButtonLink></>} />
 
       <form className="mb-4 grid gap-2 rounded-xl border border-stone-200 bg-white p-3 sm:grid-cols-6">
         <Input name="q" defaultValue={sp.q} placeholder="Nº, destinatário, rua…" className="sm:col-span-2" />
@@ -74,7 +75,13 @@ export default async function OrdersPage({
 
       <Card>
         {orders.length === 0 ? (
-          <Empty>Nenhum pedido encontrado.</Empty>
+          Object.values(sp).some(Boolean) ? (
+            <Empty>Nenhum pedido encontrado com esses filtros.</Empty>
+          ) : (
+            <Empty icon={ClipboardList} title="Nenhum pedido ainda" action={{ href: "/app/pedidos/novo", label: "Criar primeiro pedido" }}>
+              Lance pedidos do balcão, WhatsApp ou Instagram e acompanhe cada etapa até a entrega.
+            </Empty>
+          )
         ) : (
           <Table>
             <thead>

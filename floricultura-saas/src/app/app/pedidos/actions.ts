@@ -196,3 +196,12 @@ export async function duplicateOrder(fd: FormData) {
   }
   redirect(`/app/pedidos/${copy.id}/editar`);
 }
+
+/** Usado pelo quadro de produção: devolve o erro em vez de lançar, para a UI desfazer o movimento. */
+export async function moveOrder(id: string, status: OrderStatus): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { error } = await supabase.from("orders").update({ status }).eq("id", id);
+  if (error) return { error: "Não foi possível mover o pedido. Tente de novo." };
+  revalidatePath("/app", "layout");
+  return {};
+}

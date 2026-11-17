@@ -1,12 +1,13 @@
+import { Boxes, CalendarHeart, ClipboardList, Truck } from "lucide-react";
 import Link from "next/link";
 import { Logo } from "@/components/logo";
 import { ButtonLink } from "@/components/ui";
 
 const features = [
-  { icon: "🧾", title: "Pedidos sem papel", text: "Registre pedidos do balcão, WhatsApp e Instagram com cartão de mensagem, destinatário e pagamento." },
-  { icon: "🚚", title: "Agenda de entregas", text: "Veja o dia por turno, atribua entregadores e imprima a folha de rota com endereços e cartões." },
-  { icon: "🌹", title: "Estoque de flores", text: "Ficha técnica por arranjo dá baixa automática nos insumos. Controle validade dos lotes e perdas." },
-  { icon: "💐", title: "Clientes e datas", text: "Guarde endereços e datas especiais de cada cliente e receba a lista de quem lembrar esta semana." },
+  { icon: ClipboardList, title: "Pedidos sem papel", text: "Registre pedidos do balcão, WhatsApp e Instagram com cartão de mensagem, destinatário e pagamento." },
+  { icon: Truck, title: "Agenda de entregas", text: "Veja o dia por turno, atribua entregadores e imprima a folha de rota com endereços e cartões." },
+  { icon: Boxes, title: "Estoque de flores", text: "Ficha técnica por arranjo dá baixa automática nos insumos. Controle validade dos lotes e perdas." },
+  { icon: CalendarHeart, title: "Clientes e datas", text: "Guarde endereços e datas especiais de cada cliente e receba a lista de quem lembrar esta semana." },
 ];
 
 export default function Home() {
@@ -36,7 +37,7 @@ export default function Home() {
         <section className="grid gap-4 pb-24 sm:grid-cols-2 lg:grid-cols-4">
           {features.map((f) => (
             <div key={f.title} className="rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-              <div className="text-3xl">{f.icon}</div>
+              <span className="grid h-10 w-10 place-items-center rounded-lg bg-brand-50 text-brand-600"><f.icon className="h-5 w-5" aria-hidden /></span>
               <h3 className="mt-3 font-semibold text-stone-900">{f.title}</h3>
               <p className="mt-2 text-sm text-stone-600">{f.text}</p>
             </div>

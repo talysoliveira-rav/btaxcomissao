@@ -91,7 +91,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
         <Input type="date" name="ate" defaultValue={ate} className="w-40" />
         <Button variant="secondary">Atualizar</Button>
       </form>
-      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
         <Stat label="Faturamento" value={money(revenue)} hint={`${orders.length} pedidos`} />
         <Stat label="Recebido" value={money(received)} hint={`a receber ${money(revenue - received)}`} />
         <Stat label="Ticket médio" value={money(orders.length ? revenue / orders.length : 0)} />
@@ -118,7 +118,7 @@ export default async function ReportsPage({ searchParams }: { searchParams: Prom
             )}
           </Card>
           <Card title="Perdas por insumo">
-            {lossBySupply.size === 0 ? <Empty>Nenhuma perda registrada. 🌿</Empty> : (
+            {lossBySupply.size === 0 ? <Empty>Nenhuma perda registrada no período.</Empty> : (
               <ul className="space-y-1 text-sm">
                 {[...lossBySupply.entries()].sort((a, b) => b[1] - a[1]).map(([n, v]) => <li key={n} className="flex justify-between"><span>{n}</span><span>{money(v)}</span></li>)}
               </ul>

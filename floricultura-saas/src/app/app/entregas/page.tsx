@@ -1,3 +1,4 @@
+import { Truck } from "lucide-react";
 import Link from "next/link";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
@@ -120,7 +121,7 @@ export default async function DeliveriesPage({ searchParams }: { searchParams: P
       </div>
 
       {orders.length === 0 ? (
-        <Card><Empty>Nenhuma entrega ou retirada para este dia.</Empty></Card>
+        <Card><Empty icon={Truck} title="Nenhuma entrega ou retirada neste dia" action={{ href: "/app/pedidos/novo", label: "Criar pedido" }}>Use as setas para ver outros dias.</Empty></Card>
       ) : (
         <div className="space-y-6">
           {groups.map((g) => (

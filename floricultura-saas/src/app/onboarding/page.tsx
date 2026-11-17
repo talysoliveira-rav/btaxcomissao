@@ -17,7 +17,7 @@ export default async function OnboardingPage({ searchParams }: { searchParams: P
     <div className="flex min-h-screen flex-col items-center justify-center bg-gradient-to-b from-brand-50 to-[#faf9f7] px-4">
       <Logo className="mb-8 text-xl" />
       <div className="w-full max-w-md rounded-2xl border border-stone-200 bg-white p-6 shadow-sm">
-        <h1 className="text-xl font-semibold">Vamos configurar sua floricultura 🌷</h1>
+        <h1 className="text-xl font-semibold">Vamos configurar sua floricultura</h1>
         <p className="mb-5 mt-1 text-sm text-stone-500">Leva menos de um minuto. Você pode mudar tudo depois em Configurações.</p>
         <OnboardingForm />
       </div>

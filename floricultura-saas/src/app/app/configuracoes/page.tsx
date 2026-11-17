@@ -1,3 +1,4 @@
+import { Bike, Store, Tag, Users } from "lucide-react";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
 import { Badge, Button, Card, Field, Input, PageHeader, Select, Table } from "@/components/ui";
@@ -28,7 +29,7 @@ export default async function SettingsPage() {
     <>
       <PageHeader title="Configurações" />
       <div className="grid gap-6 lg:grid-cols-2">
-        <Card title="Dados da floricultura">
+        <Card icon={Store} title="Dados da floricultura">
           <form action={updateOrganization} className="space-y-3">
             <fieldset disabled={!isAdmin} className="space-y-3">
               <Field label="Nome"><Input name="name" defaultValue={org.name} required /></Field>
@@ -43,7 +44,7 @@ export default async function SettingsPage() {
           </form>
         </Card>
 
-        <Card title="🚚 Entregadores">
+        <Card icon={Bike} title="Entregadores">
           <ul className="mb-4 divide-y divide-stone-100">
             {((drivers ?? []) as Driver[]).map((d) => (
               <li key={d.id} className="py-2">
@@ -66,7 +67,7 @@ export default async function SettingsPage() {
           </form>
         </Card>
 
-        <Card title="👥 Equipe">
+        <Card icon={Users} title="Equipe">
           <Table>
             <tbody>
               {(members ?? []).map((m: { user_id: string; role: MemberRole }) => {
@@ -118,7 +119,7 @@ export default async function SettingsPage() {
           )}
         </Card>
 
-        <Card title="🏷️ Categorias de insumos">
+        <Card icon={Tag} title="Categorias de insumos">
           <ul className="mb-3 flex flex-wrap gap-2">
             {(cats ?? []).map((c: { id: string; name: string }) => (
               <li key={c.id}>

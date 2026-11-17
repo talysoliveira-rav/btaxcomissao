@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import type { Organization, MemberRole } from "@/lib/types";
 
 export const ORG_COOKIE = "flora_org";
+export const ONBOARDING_HIDDEN_COOKIE = "flora_onboarding_hidden";
 
 export type OrgContext = {
   org: Organization;

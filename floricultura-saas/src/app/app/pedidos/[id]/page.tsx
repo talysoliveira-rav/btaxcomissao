@@ -1,3 +1,4 @@
+import { Printer, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrgContext } from "@/lib/org";
@@ -43,7 +44,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
         subtitle={<>Criado em {dateTimeBR(o.created_at)}{o.channel && ` · via ${o.channel}`}</>}
         actions={
           <>
-            <ButtonLink variant="secondary" href={`/app/pedidos/${o.id}/imprimir`}>🖨️ Imprimir</ButtonLink>
+            <ButtonLink variant="secondary" href={`/app/pedidos/${o.id}/imprimir`}><Printer className="h-4 w-4" aria-hidden /> Imprimir</ButtonLink>
             {!closed && <ButtonLink variant="secondary" href={`/app/pedidos/${o.id}/editar`}>Editar</ButtonLink>}
             <form action={duplicateOrder}>
               <input type="hidden" name="id" value={o.id} />
@@ -153,7 +154,7 @@ export default async function OrderPage({ params }: { params: Promise<{ id: stri
             ) : (
               <p className="text-sm text-stone-400">Sem cartão.</p>
             )}
-            {o.anonymous && <p className="mt-2 text-xs font-medium text-amber-700">⚠️ Entrega anônima — não revelar remetente.</p>}
+            {o.anonymous && <p className="mt-2 flex items-center gap-1 text-xs font-medium text-amber-700"><TriangleAlert className="h-3.5 w-3.5" aria-hidden /> Entrega anônima — não revelar remetente.</p>}
           </Card>
         </div>
 

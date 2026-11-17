@@ -1,3 +1,4 @@
+import { PackageMinus, PackagePlus } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrgContext } from "@/lib/org";
@@ -31,8 +32,8 @@ export default async function SupplyPage({ params }: { params: Promise<{ id: str
   return (
     <>
       <PageHeader title={s.name} subtitle={<Link href="/app/estoque" className="hover:underline">← Estoque</Link>} />
-      <div className="mb-6 grid gap-4 sm:grid-cols-4">
-        <Stat label="Saldo" value={`${num(s.quantity)} ${s.unit}`} hint={Number(s.quantity) <= Number(s.min_quantity) ? "⚠️ abaixo do mínimo" : `mínimo ${num(s.min_quantity)}`} />
+      <div className="mb-6 grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
+        <Stat label="Saldo" value={`${num(s.quantity)} ${s.unit}`} hint={Number(s.quantity) <= Number(s.min_quantity) ? "abaixo do mínimo" : `mínimo ${num(s.min_quantity)}`} />
         <Stat label="Custo unitário" value={money(s.cost)} />
         <Stat label="Valor em estoque" value={money(Math.max(0, Number(s.quantity)) * Number(s.cost))} />
         <Stat label="Perdas (30 dias)" value={`${num(losses30)} ${s.unit}`} hint={money(losses30 * Number(s.cost))} />
@@ -41,7 +42,7 @@ export default async function SupplyPage({ params }: { params: Promise<{ id: str
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
           <div className="grid gap-6 md:grid-cols-2">
-            <Card title="📥 Entrada (compra)">
+            <Card icon={PackagePlus} title="Entrada (compra)">
               <form action={receiveSupply} className="space-y-3">
                 <input type="hidden" name="supply_id" value={s.id} />
                 <div className="grid grid-cols-2 gap-3">
@@ -54,7 +55,7 @@ export default async function SupplyPage({ params }: { params: Promise<{ id: str
                 <SubmitButton variant="leaf" className="w-full">Registrar entrada</SubmitButton>
               </form>
             </Card>
-            <Card title="📤 Perda, saída ou inventário">
+            <Card icon={PackageMinus} title="Perda, saída ou inventário">
               <form action={adjustSupply} className="space-y-3">
                 <input type="hidden" name="supply_id" value={s.id} />
                 <div className="grid grid-cols-2 gap-3">

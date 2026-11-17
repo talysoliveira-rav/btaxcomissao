@@ -1,4 +1,5 @@
 "use client";
+import { Store, Truck, X } from "lucide-react";
 import { useActionState, useMemo, useState } from "react";
 import { Alert, Button, Card, Field, Input, Select, Textarea } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
@@ -213,7 +214,7 @@ export function OrderForm({
                   <span className="py-2 text-sm font-medium">{money(i.quantity * i.unit_price)}</span>
                   {!itemsLocked && items.length > 1 && (
                     <Button type="button" variant="ghost" onClick={() => setItems(items.filter((x) => x.key !== i.key))} aria-label="Remover">
-                      ✕
+                      <X className="h-4 w-4" />
                     </Button>
                   )}
                 </div>
@@ -244,7 +245,7 @@ export function OrderForm({
                 onClick={() => setFulfillment(f)}
                 className={`rounded-full px-3 py-1 ${fulfillment === f ? "bg-brand-600 text-white" : "bg-stone-100 text-stone-700"}`}
               >
-                {f === "entrega" ? "🚚 Entrega" : "🏪 Retirada na loja"}
+                {f === "entrega" ? <><Truck className="mr-1 inline h-4 w-4" aria-hidden />Entrega</> : <><Store className="mr-1 inline h-4 w-4" aria-hidden />Retirada na loja</>}
               </button>
             ))}
           </div>

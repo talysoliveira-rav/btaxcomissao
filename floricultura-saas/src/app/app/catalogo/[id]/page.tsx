@@ -33,7 +33,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <PageHeader title={p.name} subtitle={<Link href="/app/catalogo" className="hover:underline">← Catálogo</Link>} />
-      <div className="mb-6 grid gap-4 sm:grid-cols-4">
+      <div className="mb-6 grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
         <Stat label="Preço" value={money(p.price)} />
         <Stat label="Custo dos insumos" value={money(cost)} />
         <Stat label="Margem bruta" value={`${margin.toFixed(0)}%`} hint={`${money(Number(p.price) - cost)} por unidade`} />

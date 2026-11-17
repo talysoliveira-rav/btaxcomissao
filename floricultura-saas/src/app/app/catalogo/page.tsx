@@ -1,3 +1,4 @@
+import { Flower2, Plus } from "lucide-react";
 import Link from "next/link";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
@@ -31,7 +32,13 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
             <Button variant="secondary">Buscar</Button>
           </form>
           {products.length === 0 ? (
-            <Empty>Nenhum produto cadastrado ainda.</Empty>
+            sp.q ? (
+            <Empty>Nenhum produto encontrado.</Empty>
+          ) : (
+            <Empty icon={Flower2} title="Nenhum produto ainda">
+              Cadastre buquês, arranjos e cestas ao lado. Depois monte a ficha técnica para calcular custo e margem.
+            </Empty>
+          )
           ) : (
             <Table>
               <thead><tr><th>Produto</th><th className="text-right">Preço</th><th className="text-right">Custo insumos</th><th className="text-right">Margem</th></tr></thead>
@@ -61,7 +68,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
             </Table>
           )}
         </Card>
-        <Card title="Novo produto">
+        <Card icon={Plus} title="Novo produto">
           <form action={createProduct} className="space-y-3">
             <ProductFields />
             <SubmitButton className="w-full">Cadastrar e montar ficha técnica</SubmitButton>

@@ -1,3 +1,4 @@
+import { CalendarDays, CalendarHeart } from "lucide-react";
 import Link from "next/link";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
@@ -49,7 +50,7 @@ export default async function DatesPage({ searchParams }: { searchParams: Promis
       />
       <div className="grid gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2" title={`Próximos ${days} dias (${dates.length})`}>
-          {dates.length === 0 ? <Empty>Nenhuma data neste período. Cadastre datas na ficha de cada cliente.</Empty> : (
+          {dates.length === 0 ? <Empty icon={CalendarHeart} title="Nenhuma data neste período" action={{ href: "/app/clientes", label: "Ver clientes" }}>Cadastre aniversários e outras datas na ficha de cada cliente para receber os lembretes aqui.</Empty> : (
             <Table>
               <thead><tr><th>Quando</th><th>Data</th><th>Cliente</th><th /></tr></thead>
               <tbody>
@@ -71,7 +72,7 @@ export default async function DatesPage({ searchParams }: { searchParams: Promis
             </Table>
           )}
         </Card>
-        <Card title="📅 Datas comerciais">
+        <Card icon={CalendarDays} title="Datas comerciais">
           <ul className="space-y-2 text-sm">
             {commercial.map((c) => (
               <li key={c.t} className="flex justify-between">

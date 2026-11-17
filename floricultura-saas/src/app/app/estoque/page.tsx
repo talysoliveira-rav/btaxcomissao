@@ -1,3 +1,4 @@
+import { Boxes, Hourglass, PackagePlus, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
@@ -37,7 +38,7 @@ export default async function StockPage({ searchParams }: { searchParams: Promis
       />
 
       {expiring.length > 0 && (
-        <Card className="mb-6 border-amber-200" title="⏳ Lotes vencendo (próximos 3 dias)">
+        <Card className="mb-6 border-amber-200" icon={Hourglass} title="Lotes vencendo (próximos 3 dias)">
           <ul className="divide-y divide-stone-100 text-sm">
             {expiring.map((b) => (
               <li key={b.id} className="flex items-center justify-between gap-2 py-2">
@@ -72,7 +73,13 @@ export default async function StockPage({ searchParams }: { searchParams: Promis
             <Button variant="secondary">Filtrar</Button>
           </form>
           {supplies.length === 0 ? (
-            <Empty>Nenhum insumo encontrado.</Empty>
+            sp.q || sp.cat || sp.baixo ? (
+              <Empty>Nenhum insumo encontrado com esses filtros.</Empty>
+            ) : (
+              <Empty icon={Boxes} title="Nenhum insumo cadastrado">
+                Cadastre flores, folhagens, vasos e embalagens no formulário ao lado. Eles serão usados nas fichas técnicas dos produtos.
+              </Empty>
+            )
           ) : (
             <Table>
               <thead><tr><th>Insumo</th><th className="text-right">Saldo</th><th className="text-right">Mínimo</th><th className="text-right">Custo</th></tr></thead>
@@ -85,7 +92,7 @@ export default async function StockPage({ searchParams }: { searchParams: Promis
                         <Link href={`/app/estoque/${s.id}`} className="font-medium hover:text-brand-700">{s.name}</Link>
                         <span className="block text-xs text-stone-500">{s.supply_categories?.name ?? "—"}</span>
                       </td>
-                      <td className={`text-right font-medium ${low ? "text-red-700" : ""}`}>{num(s.quantity)} {s.unit}{low && " ⚠️"}</td>
+                      <td className={`text-right font-medium ${low ? "text-red-700" : ""}`}><span className="inline-flex items-center gap-1">{low && <TriangleAlert className="h-3.5 w-3.5" aria-label="Abaixo do mínimo" />}{num(s.quantity)} {s.unit}</span></td>
                       <td className="text-right text-stone-500">{num(s.min_quantity)}</td>
                       <td className="text-right text-stone-600">{money(s.cost)}</td>
                     </tr>
@@ -96,7 +103,7 @@ export default async function StockPage({ searchParams }: { searchParams: Promis
           )}
         </Card>
 
-        <Card title="Novo insumo">
+        <Card icon={PackagePlus} title="Novo insumo">
           <form action={createSupply} className="space-y-3">
             <SupplyFields categories={cats ?? []} />
             <Field label="Quantidade inicial (opcional)"><Input name="initial_quantity" inputMode="decimal" /></Field>

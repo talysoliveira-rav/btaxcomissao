@@ -1,3 +1,4 @@
+import { Cake, ClipboardList, MapPin } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getOrgContext } from "@/lib/org";
@@ -42,7 +43,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
           </>
         }
       />
-      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+      <div className="mb-6 grid grid-cols-2 gap-3 md:gap-4 sm:grid-cols-3">
         <Stat label="Pedidos" value={valid.length} />
         <Stat label="Total comprado" value={money(spent)} />
         <Stat label="Ticket médio" value={money(valid.length ? spent / valid.length : 0)} hint={valid[0] ? `último em ${dateBR(valid[0].created_at)}` : undefined} />
@@ -50,7 +51,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
 
       <div className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <Card title="🎂 Datas especiais">
+          <Card icon={Cake} title="Datas especiais">
             {(dates ?? []).length === 0 ? <p className="mb-3 text-sm text-stone-400">Nenhuma data cadastrada. Aniversários e bodas viram lembretes de venda!</p> : (
               <ul className="mb-4 divide-y divide-stone-100">
                 {((dates ?? []) as SpecialDate[]).map((d) => (
@@ -73,7 +74,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
             </form>
           </Card>
 
-          <Card title="📍 Endereços">
+          <Card icon={MapPin} title="Endereços">
             {(addresses ?? []).length === 0 ? <p className="mb-3 text-sm text-stone-400">Nenhum endereço salvo.</p> : (
               <ul className="mb-4 divide-y divide-stone-100">
                 {((addresses ?? []) as CustomerAddress[]).map((a) => (
@@ -105,8 +106,8 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
             </form>
           </Card>
 
-          <Card title="Histórico de pedidos">
-            {os.length === 0 ? <Empty>Nenhum pedido ainda.</Empty> : (
+          <Card icon={ClipboardList} title="Histórico de pedidos">
+            {os.length === 0 ? <Empty icon={ClipboardList} title="Nenhum pedido ainda" action={{ href: "/app/pedidos/novo", label: "Criar pedido" }} /> : (
               <Table>
                 <thead><tr><th>Nº</th><th>Data</th><th>Destinatário</th><th>Status</th><th className="text-right">Total</th></tr></thead>
                 <tbody>
