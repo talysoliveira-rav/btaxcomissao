@@ -95,6 +95,9 @@ body {
     box-shadow: 0 10px 22px -8px rgb(219 39 119 / 0.7);
   }
 
+  /* Um card com um menu aberto fica acima dos vizinhos (o vidro cria camadas próprias) */
+  .surface:has(details[open]) { position: relative; z-index: 20; }
+
   .logo-mark { background-image: var(--rose-gradient); }
 
   /* Flor de fundo de cada aba */

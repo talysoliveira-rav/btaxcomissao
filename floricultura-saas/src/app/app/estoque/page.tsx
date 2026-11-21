@@ -2,11 +2,13 @@ import { Boxes, Hourglass, PackagePlus, TriangleAlert } from "lucide-react";
 import Link from "next/link";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
-import { Badge, Button, ButtonLink, Card, Empty, Field, Input, PageHeader, Select, Table } from "@/components/ui";
+import { Badge, Button, Card, Empty, Field, Input, PageHeader, Select, Table } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { dateBR, money, num, todayISO } from "@/lib/format";
 import type { Supply } from "@/lib/types";
 import { createSupply, discardBatch } from "./actions";
+import { StockTabs } from "./tabs";
+import { perishAlertCount } from "@/lib/perishability-server";
 import { SupplyFields } from "./supply-fields";
 
 export const metadata = { title: "Estoque" };
@@ -23,6 +25,7 @@ export default async function StockPage({ searchParams }: { searchParams: Promis
     supabase.from("supply_categories").select("id, name").eq("org_id", org.id).order("name"),
     supabase.from("supply_batches").select("id, remaining, expires_at, supplier, supplies(name, unit)").eq("org_id", org.id).gt("remaining", 0).lte("expires_at", todayISO(3)).order("expires_at"),
   ]);
+  const alerts = await perishAlertCount(org.id);
   let supplies = (data ?? []) as Supply[];
   if (sp.baixo) supplies = supplies.filter((s) => s.active && Number(s.quantity) <= Number(s.min_quantity));
   const totalValue = supplies.reduce((a, s) => a + Math.max(0, Number(s.quantity)) * Number(s.cost), 0);
@@ -34,11 +37,11 @@ export default async function StockPage({ searchParams }: { searchParams: Promis
       <PageHeader
         title="Estoque"
         subtitle={`${supplies.length} insumo(s) · valor em estoque ${money(totalValue)}`}
-        actions={<ButtonLink variant="secondary" href="/app/estoque/movimentacoes">Movimentações</ButtonLink>}
       />
+      <StockTabs active="insumos" alerts={alerts} />
 
       {expiring.length > 0 && (
-        <Card className="mb-6 border-amber-200" icon={Hourglass} title="Lotes vencendo (próximos 3 dias)">
+        <Card className="mb-6 !border-amber-200" icon={Hourglass} title="Lotes vencendo (próximos 3 dias)" actions={<Link href="/app/estoque/perecibilidade" className="text-xs font-medium text-brand-700 hover:underline">Ver perecibilidade →</Link>}>
           <ul className="divide-y divide-stone-100 text-sm">
             {expiring.map((b) => (
               <li key={b.id} className="flex items-center justify-between gap-2 py-2">

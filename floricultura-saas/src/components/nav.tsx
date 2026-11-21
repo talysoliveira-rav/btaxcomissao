@@ -49,7 +49,9 @@ function useActive() {
   return (href: string) => (href === "/app" ? path === "/app" : path === href || path.startsWith(href + "/"));
 }
 
-function NavList({ collapsed = false, onNavigate }: { collapsed?: boolean; onNavigate?: () => void }) {
+type Badges = Record<string, number>;
+
+function NavList({ collapsed = false, onNavigate, badges = {} }: { collapsed?: boolean; onNavigate?: () => void; badges?: Badges }) {
   const isActive = useActive();
   return (
     <nav aria-label="Principal" className="space-y-4">
@@ -64,15 +66,16 @@ function NavList({ collapsed = false, onNavigate }: { collapsed?: boolean; onNav
           <ul className="space-y-1">
             {g.items.map(({ href, label, icon: Icon }) => {
               const active = isActive(href);
+              const badge = badges[href] ?? 0;
               return (
                 <li key={href}>
                   <Link
                     href={href}
                     onClick={onNavigate}
-                    title={collapsed ? label : undefined}
+                    title={collapsed ? (badge ? `${label} · ${badge} alerta(s)` : label) : undefined}
                     aria-label={collapsed ? label : undefined}
                     aria-current={active ? "page" : undefined}
-                    className={`group flex items-center rounded-xl text-sm font-medium transition-all duration-300 ${
+                    className={`group relative flex items-center rounded-xl text-sm font-medium transition-all duration-300 ${
                       collapsed ? "mx-auto h-10 w-10 justify-center" : "gap-2.5 px-3 py-2"
                     } ${active ? "accent-active" : "text-stone-600 hover:bg-white/70 hover:text-stone-900"}`}
                   >
@@ -82,6 +85,14 @@ function NavList({ collapsed = false, onNavigate }: { collapsed?: boolean; onNav
                       aria-hidden
                     />
                     {!collapsed && <span className="truncate">{label}</span>}
+                    {badge > 0 &&
+                      (collapsed ? (
+                        <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-orange-500 ring-2 ring-white" aria-label={`${badge} alerta(s)`} />
+                      ) : (
+                        <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-orange-500 px-1.5 text-[11px] font-semibold text-white" aria-label={`${badge} alerta(s)`}>
+                          {badge}
+                        </span>
+                      ))}
                   </Link>
                 </li>
               );
@@ -152,7 +163,9 @@ export function Sidebar({
   orgSwitcher,
   account,
   accountCompact,
+  badges,
 }: {
+  badges?: Badges;
   initialCollapsed: boolean;
   initialAccent: "glass" | "gradient";
   logo: React.ReactNode;
@@ -193,7 +206,7 @@ export function Sidebar({
       {!collapsed && <div className="px-4 pt-4">{orgSwitcher}</div>}
 
       <div className={`flex-1 overflow-y-auto overflow-x-hidden py-4 ${collapsed ? "px-2" : "px-3"}`}>
-        <NavList collapsed={collapsed} />
+        <NavList collapsed={collapsed} badges={badges} />
       </div>
 
       <div className={`space-y-3 border-t border-stone-200/60 ${collapsed ? "px-2 py-3" : "p-4"}`}>
@@ -216,7 +229,7 @@ export function Sidebar({
 }
 
 /** Botão de menu + gaveta (celular) */
-export function MobileDrawer({ header, footer }: { header: React.ReactNode; footer: React.ReactNode }) {
+export function MobileDrawer({ header, footer, badges }: { header: React.ReactNode; footer: React.ReactNode; badges?: Badges }) {
   const [open, setOpen] = useState(false);
   const path = usePathname();
   useEffect(() => setOpen(false), [path]);
@@ -262,7 +275,7 @@ export function MobileDrawer({ header, footer }: { header: React.ReactNode; foot
             </button>
           </div>
           <div className="flex-1 overflow-y-auto p-3">
-            <NavList onNavigate={() => setOpen(false)} />
+            <NavList onNavigate={() => setOpen(false)} badges={badges} />
           </div>
           <div className="space-y-3 border-t border-stone-200/60 p-4">{footer}</div>
         </div>

@@ -2,6 +2,7 @@ import Link from "next/link";
 import { cookies } from "next/headers";
 import { LogOut } from "lucide-react";
 import { getOrgContext } from "@/lib/org";
+import { perishAlertCount } from "@/lib/perishability-server";
 import { Logo } from "@/components/logo";
 import { AccentToggle, BottomTabs, FlowerBackdrop, MobileDrawer, Sidebar } from "@/components/nav";
 import { OrgSwitcher } from "@/components/org-switcher";
@@ -12,6 +13,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const jar = await cookies();
   const collapsed = jar.get("flora_sidebar")?.value === "collapsed";
   const accent = jar.get("flora_accent")?.value === "gradient" ? "gradient" : "glass";
+  const badges = { "/app/estoque": await perishAlertCount(ctx.org.id) };
 
   const account = (
     <div className="flex items-center gap-2 text-xs text-stone-500">
@@ -49,11 +51,13 @@ export default async function AppLayout({ children }: { children: React.ReactNod
         orgSwitcher={orgSwitcher}
         account={account}
         accountCompact={accountCompact}
+        badges={badges}
       />
 
       {/* Celular */}
       <header className="glass no-print sticky top-0 z-30 flex items-center gap-2 border-b border-white/70 px-3 py-2 md:hidden">
         <MobileDrawer
+          badges={badges}
           header={<Logo />}
           footer={
             <>

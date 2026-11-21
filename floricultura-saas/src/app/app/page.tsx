@@ -32,7 +32,7 @@ export default async function Dashboard() {
     supabase.from("orders").select("total").eq("org_id", org.id).neq("status", "cancelado").gte("created_at", monthStart),
     supabase
       .from("supply_batches")
-      .select("id, remaining, expires_at, supplies(name, unit)")
+      .select("id, remaining, unit_cost, expires_at, supplies(name, unit, cost)")
       .eq("org_id", org.id)
       .gt("remaining", 0)
       .lte("expires_at", todayISO(2))
@@ -44,7 +44,8 @@ export default async function Dashboard() {
   const dates = (datesRes.data ?? []) as UpcomingDate[];
   const monthRevenue = (monthRes.data ?? []).reduce((a, o: { total: number }) => a + Number(o.total), 0);
   const delivered = todayOrders.filter((o) => o.status === "entregue").length;
-  const expiring = (expiringRes.data ?? []) as unknown as { id: string; remaining: number; expires_at: string; supplies: { name: string; unit: string } }[];
+  const expiring = (expiringRes.data ?? []) as unknown as { id: string; remaining: number; unit_cost: number; expires_at: string; supplies: { name: string; unit: string; cost: number } }[];
+  const atRisk = expiring.reduce((a, b) => a + Number(b.remaining) * (Number(b.unit_cost) || Number(b.supplies.cost) || 0), 0);
 
   return (
     <>
@@ -118,11 +119,16 @@ export default async function Dashboard() {
             )}
           </Card>
 
-          <Card icon={Hourglass} title="Atenção no estoque">
+          <Card icon={Hourglass} title="Atenção no estoque" actions={<Link href="/app/estoque/perecibilidade" className="text-xs font-medium text-brand-600">Perecibilidade →</Link>}>
             {lowStock.length === 0 && expiring.length === 0 ? (
               <Empty>Tudo em ordem: nada vencendo e nada abaixo do mínimo.</Empty>
             ) : (
               <ul className="space-y-2 text-sm">
+                {atRisk > 0 && (
+                  <li className="rounded-lg bg-orange-50 px-2.5 py-1.5 text-xs font-medium text-orange-800">
+                    {money(atRisk)} em flores vencendo até {dateBR(todayISO(2)).slice(0, 5)}
+                  </li>
+                )}
                 {expiring.map((b) => (
                   <li key={b.id} className="flex justify-between gap-2">
                     <span className="truncate">{b.supplies.name}</span>

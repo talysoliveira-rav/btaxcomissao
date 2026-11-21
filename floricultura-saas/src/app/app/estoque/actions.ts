@@ -83,3 +83,24 @@ export async function deleteSupply(fd: FormData) {
   if (error) throw new Error(error.message.includes("foreign key") ? "Insumo usado em ficha técnica — desative em vez de excluir." : error.message);
   redirect("/app/estoque");
 }
+
+/** Perda parcial de um lote específico (ex.: 5 de 20 hastes murcharam). */
+export async function registerBatchLoss(fd: FormData) {
+  const { org } = await getOrgContext();
+  const batchId = reqStr(fd, "batch_id");
+  const supabase = await createClient();
+  const { data: batch } = await supabase.from("supply_batches").select("supply_id, remaining").eq("id", batchId).single();
+  if (!batch) throw new Error("Lote não encontrado.");
+  const qty = Math.min(Math.abs(decimal(fd, "quantity")), Number(batch.remaining));
+  if (qty <= 0) return;
+  const { error } = await supabase.from("stock_movements").insert({
+    org_id: org.id,
+    supply_id: batch.supply_id,
+    batch_id: batchId,
+    type: "perda",
+    quantity: -qty,
+    reason: str(fd, "reason") ?? "Perda no lote",
+  });
+  if (error) throw new Error(error.message);
+  revalidatePath("/app", "layout");
+}

@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Button, Card, Empty, Input, PageHeader, Select, Table } from "@/components/ui";
 import { dateTimeBR, MOVEMENT_LABEL, num, todayISO } from "@/lib/format";
 import type { StockMovementType } from "@/lib/types";
+import { StockTabs } from "../tabs";
 
 export const metadata = { title: "Movimentações de estoque" };
 
@@ -27,7 +28,8 @@ export default async function MovementsPage({ searchParams }: { searchParams: Pr
 
   return (
     <>
-      <PageHeader title="Movimentações de estoque" subtitle={<Link href="/app/estoque" className="hover:underline">← Estoque</Link>} />
+      <PageHeader title="Estoque" subtitle="Entradas, saídas, perdas e consumo dos pedidos." />
+      <StockTabs active="movimentacoes" />
       <form className="mb-4 flex flex-wrap gap-2 rounded-xl border border-stone-200 bg-white p-3">
         <Select name="tipo" defaultValue={sp.tipo ?? ""} className="w-48">
           <option value="">Todos os tipos</option>
