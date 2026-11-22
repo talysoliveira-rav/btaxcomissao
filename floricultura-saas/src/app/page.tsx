@@ -256,7 +256,7 @@ export default function Home() {
         <section id="planos" className="relative scroll-mt-20 border-y border-white/70 bg-white/50 py-24 backdrop-blur">
           <Lotus className="pointer-events-none absolute -right-20 bottom-0 h-80 w-80 text-brand-500/10" strokeWidth={1} />
           <div className="mx-auto max-w-6xl px-4 sm:px-6">
-            <SectionTitle eyebrow="Planos" title="Escolha o momento da sua floricultura" text={`Mensalidade sem fidelidade. Implantação única de ${brl(SETUP_FEE)} (grátis no Premium).`} />
+            <SectionTitle eyebrow="Planos" title="Escolha o momento da sua floricultura" text={`Mensalidade sem fidelidade. Implantação única de ${brl(SETUP_FEE)} nos planos Essencial e Profissional.`} />
             <div className="mt-14 grid gap-5 lg:grid-cols-3">
               {PLANS.map((p) => (
                 <div
@@ -268,25 +268,34 @@ export default function Home() {
                   )}
                   <h3 className="text-lg font-semibold text-stone-900">{p.name}</h3>
                   <p className="mt-1 text-sm text-stone-500">{p.tagline}</p>
-                  <p className="mt-5 flex items-end gap-1">
-                    <span className="text-4xl font-semibold tracking-tight text-stone-900">{brl(p.price)}</span>
-                    <span className="pb-1 text-sm text-stone-500">/mês</span>
-                  </p>
-                  <p className="mt-1 text-xs text-stone-500">{p.setupIncluded ? "Implantação inclusa" : `+ implantação de ${brl(SETUP_FEE)} (uma vez)`}</p>
+                  {p.price != null ? (
+                    <>
+                      <p className="mt-5 flex items-end gap-1">
+                        <span className="text-4xl font-semibold tracking-tight text-stone-900">{brl(p.price)}</span>
+                        <span className="pb-1 text-sm text-stone-500">/mês</span>
+                      </p>
+                      <p className="mt-1 text-xs text-stone-500">{p.setupIncluded ? "Implantação inclusa" : `+ implantação de ${brl(SETUP_FEE)} (uma vez)`}</p>
+                    </>
+                  ) : (
+                    <>
+                      <p className="mt-5 text-4xl font-semibold tracking-tight text-stone-900">Sob medida</p>
+                      <p className="mt-1 text-xs text-stone-500">Proposta feita com um especialista para a sua operação</p>
+                    </>
+                  )}
                   <ul className="mt-6 flex-1 space-y-2.5">
                     {p.features.map((f) => (
                       <li key={f} className="flex items-start gap-2 text-sm text-stone-700"><Check className="mt-0.5 h-4 w-4 shrink-0 text-brand-600" aria-hidden /> {f}</li>
                     ))}
                   </ul>
                   <a
-                    href={waLink(`Olá! Tenho interesse no plano ${p.name} do Florescer.`)}
+                    href={waLink(p.price != null ? `Olá! Tenho interesse no plano ${p.name} do Florescer.` : `Olá! Quero falar com um especialista sobre o plano ${p.name} do Florescer.`)}
                     target="_blank"
                     rel="noopener"
                     className={`mt-8 inline-flex items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold transition active:scale-[0.98] ${
                       p.highlight ? "btn-primary" : "border border-stone-200 bg-white text-stone-800 hover:border-brand-200 hover:text-brand-700"
                     }`}
                   >
-                    <WhatsIcon /> Quero o {p.name}
+                    <WhatsIcon /> {p.price != null ? `Quero o ${p.name}` : "Falar com um especialista"}
                   </a>
                 </div>
               ))}

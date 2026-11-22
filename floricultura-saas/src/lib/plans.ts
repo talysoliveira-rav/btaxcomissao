@@ -12,7 +12,8 @@ export const SETUP_FEE = 497;
 export type Plan = {
   key: string;
   name: string;
-  price: number;
+  /** null = sem preço publicado: “fale com um especialista” */
+  price: number | null;
   tagline: string;
   highlight?: boolean;
   setupIncluded?: boolean;
@@ -53,8 +54,8 @@ export const PLANS: Plan[] = [
   {
     key: "premium",
     name: "Premium",
-    price: 347,
-    tagline: "Para quem tem mais de uma loja ou quer tudo pronto",
+    price: null,
+    tagline: "Para redes, mais de uma loja ou quem quer tudo sob medida",
     setupIncluded: true,
     features: [
       "Tudo do Profissional",
