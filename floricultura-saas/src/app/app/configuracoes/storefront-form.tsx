@@ -1,11 +1,16 @@
 "use client";
 import { useActionState, useRef, useState } from "react";
-import { ImagePlus, LoaderCircle, X } from "lucide-react";
+import { ImagePlus, LoaderCircle, Sparkles, X } from "lucide-react";
 import { Alert, Field, Input, Textarea } from "@/components/ui";
 import { SubmitButton } from "@/components/submit-button";
 import { createClient } from "@/lib/supabase/client";
 import { extFor, randomName, resizeImage } from "@/lib/images";
 import type { Organization } from "@/lib/types";
+import { parseHours } from "@/lib/hours";
+import { parseRegions } from "@/lib/regions";
+import { descriptionOptions, nextSuggestion, taglineOptions } from "@/lib/suggestions";
+import { HoursPicker } from "./hours-picker";
+import { RegionsPicker } from "./regions-picker";
 import { updateStorefront, type StorefrontState } from "./actions";
 
 function BrandImage({ orgId, name, label, initial, maxSide, aspect }: { orgId: string; name: string; label: string; initial: string | null; maxSide: number; aspect: string }) {
@@ -57,9 +62,38 @@ function BrandImage({ orgId, name, label, initial, maxSide, aspect }: { orgId: s
   );
 }
 
+function SuggestButton({ onClick }: { onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="inline-flex items-center gap-1 rounded-full bg-brand-50 px-2.5 py-1 text-[11px] font-semibold text-brand-700 ring-1 ring-brand-100 transition hover:bg-brand-100"
+    >
+      <Sparkles className="h-3 w-3" aria-hidden /> Sugerir
+    </button>
+  );
+}
+
+function SectionTitle({ title, hint, action }: { title: string; hint?: string; action?: React.ReactNode }) {
+  return (
+    <div className="mb-1.5 flex items-end justify-between gap-2">
+      <div>
+        <span className="text-xs font-medium text-stone-600">{title}</span>
+        {hint && <span className="block text-[11px] text-stone-400">{hint}</span>}
+      </div>
+      {action}
+    </div>
+  );
+}
+
 export function StorefrontForm({ org, baseUrl, disabled }: { org: Organization; baseUrl: string; disabled: boolean }) {
   const [state, action] = useActionState<StorefrontState, FormData>(updateStorefront, {});
   const [slug, setSlug] = useState(org.slug);
+  const regions = parseRegions(org.delivery_regions);
+  const city = (regions.find((r) => r.type === "city") as { label: string } | undefined)?.label ?? null;
+  const ctx = { name: org.name, city };
+  const [tagline, setTagline] = useState(org.tagline ?? "");
+  const [about, setAbout] = useState(org.store_description ?? "");
   return (
     <form action={action} className="space-y-4">
       {state.error && <Alert>{state.error}</Alert>}
@@ -82,13 +116,25 @@ export function StorefrontForm({ org, baseUrl, disabled }: { org: Organization; 
           <BrandImage orgId={org.id} name="logo_url" label="Logo da floricultura" initial={org.logo_url} maxSide={512} aspect="aspect-square" />
           <BrandImage orgId={org.id} name="cover_url" label="Foto de capa" initial={org.cover_url} maxSide={1600} aspect="aspect-[2/1]" />
         </div>
-        <Field label="Frase de destaque"><Input name="tagline" defaultValue={org.tagline ?? ""} placeholder="Flores frescas entregues com carinho" maxLength={90} /></Field>
-        <Field label="Sobre a floricultura"><Textarea name="store_description" defaultValue={org.store_description ?? ""} placeholder="Conte em poucas linhas o que torna sua floricultura especial." /></Field>
+        <div>
+          <SectionTitle title="Frase de destaque" hint="Aparece embaixo do nome, no topo da vitrine." action={<SuggestButton onClick={() => setTagline(nextSuggestion(taglineOptions(ctx), tagline))} />} />
+          <Input name="tagline" value={tagline} onChange={(e) => setTagline(e.target.value)} placeholder="Flores frescas entregues com carinho" maxLength={90} />
+        </div>
+        <div>
+          <SectionTitle title="Sobre a floricultura" hint="Use a sugestão como ponto de partida e ajuste com o seu jeito." action={<SuggestButton onClick={() => setAbout(nextSuggestion(descriptionOptions(ctx), about))} />} />
+          <Textarea name="store_description" value={about} onChange={(e) => setAbout(e.target.value)} rows={4} placeholder="Conte em poucas linhas o que torna sua floricultura especial." />
+        </div>
         <div className="grid gap-3 sm:grid-cols-2">
           <Field label="WhatsApp de atendimento" hint="Para onde vão os pedidos da vitrine."><Input name="whatsapp" defaultValue={org.whatsapp ?? org.phone ?? ""} placeholder="(11) 99999-9999" required /></Field>
           <Field label="Instagram"><Input name="instagram" defaultValue={org.instagram ?? ""} placeholder="@suafloricultura" /></Field>
-          <Field label="Horário de funcionamento"><Input name="opening_hours" defaultValue={org.opening_hours ?? ""} placeholder="Seg a sáb, 8h às 19h" /></Field>
-          <Field label="Área de entrega"><Input name="delivery_area" defaultValue={org.delivery_area ?? ""} placeholder="Zona Sul e Centro de São Paulo" /></Field>
+        </div>
+        <div>
+          <SectionTitle title="Horário de funcionamento" hint="Escolha um atalho e ajuste os dias e horários." />
+          <HoursPicker initial={parseHours(org.business_hours)} />
+        </div>
+        <div>
+          <SectionTitle title="Área de entrega" hint="Marque o estado, as cidades ou regiões inteiras e, se quiser, bairros." />
+          <RegionsPicker initial={regions} />
         </div>
       </fieldset>
       {!disabled && <SubmitButton>Salvar vitrine</SubmitButton>}

@@ -3,6 +3,8 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { getOrgContext, requireAdmin } from "@/lib/org";
 import { bool, decimal, reqStr, str } from "@/lib/form";
+import { hoursError, parseHours, summarizeHours } from "@/lib/hours";
+import { parseRegions, summarizeRegions } from "@/lib/regions";
 
 export async function updateOrganization(fd: FormData) {
   const { org } = await requireAdmin();
@@ -85,6 +87,19 @@ export async function updateStorefront(_: StorefrontState, fd: FormData): Promis
   const slug = (str(fd, "slug") ?? "").toLowerCase();
   if (!/^[a-z0-9-]{3,40}$/.test(slug)) return { error: "O endereço deve ter de 3 a 40 letras minúsculas, números ou hífen." };
   const clean = (u: string | null) => (u && /^https:\/\//.test(u) ? u : null);
+  const json = (k: string) => {
+    try {
+      return JSON.parse(String(fd.get(k) ?? "null"));
+    } catch {
+      return null;
+    }
+  };
+  const hours = parseHours(json("business_hours"));
+  if (hours) {
+    const err = hoursError(hours);
+    if (err) return { error: err };
+  }
+  const regions = parseRegions(json("delivery_regions"));
   const supabase = await createClient();
   const { error } = await supabase
     .from("organizations")
@@ -95,8 +110,10 @@ export async function updateStorefront(_: StorefrontState, fd: FormData): Promis
       store_description: str(fd, "store_description"),
       whatsapp: str(fd, "whatsapp"),
       instagram: str(fd, "instagram")?.replace(/^@/, "") ?? null,
-      opening_hours: str(fd, "opening_hours"),
-      delivery_area: str(fd, "delivery_area"),
+      business_hours: hours,
+      opening_hours: hours ? summarizeHours(hours) : null,
+      delivery_regions: regions,
+      delivery_area: regions.length ? summarizeRegions(regions) : null,
       logo_url: clean(str(fd, "logo_url")),
       cover_url: clean(str(fd, "cover_url")),
     })

@@ -22,6 +22,8 @@ export type Organization = {
   delivery_area: string | null;
   logo_url: string | null;
   cover_url: string | null;
+  business_hours: unknown;
+  delivery_regions: unknown;
 };
 
 export type PriceMode = "exato" | "a_partir_de" | "sob_consulta";

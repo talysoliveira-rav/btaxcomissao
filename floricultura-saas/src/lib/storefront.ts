@@ -24,6 +24,8 @@ export type Store = {
   instagram: string | null;
   opening_hours: string | null;
   delivery_area: string | null;
+  business_hours: unknown;
+  delivery_regions: unknown;
   address: string | null;
   logo_url: string | null;
   cover_url: string | null;

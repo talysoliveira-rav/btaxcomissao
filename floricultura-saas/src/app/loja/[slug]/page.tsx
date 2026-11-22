@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { AtSign, Clock, MapPin, Truck } from "lucide-react";
 import { whatsappLink } from "@/lib/format";
+import { DAYS, fmtTime, openStatus, parseHours } from "@/lib/hours";
 import { categorySlug, getStore, groupByCategory } from "@/lib/storefront";
 import { siteUrl, storePath } from "@/lib/site";
 import { ProductCard, StoreAvatar, StoreFooter, StoreHeader, WhatsAppIcon } from "./ui";
@@ -34,8 +35,10 @@ export default async function StorePage({ params }: Props) {
   const featured = products.filter((p) => p.featured);
   const groups = groupByCategory(products);
   const wa = whatsappLink(store.whatsapp, `Olá, ${store.name}! Vim pela vitrine e gostaria de ajuda para escolher.`);
+  const hours = parseHours(store.business_hours);
+  const status = hours ? openStatus(hours) : null;
   const info = [
-    store.opening_hours && { icon: Clock, text: store.opening_hours },
+    !status && store.opening_hours && { icon: Clock, text: store.opening_hours },
     store.delivery_area && { icon: Truck, text: `Entregamos: ${store.delivery_area}` },
     store.address && { icon: MapPin, text: store.address },
     store.instagram && { icon: AtSign, text: store.instagram, href: `https://instagram.com/${store.instagram}` },
@@ -68,8 +71,16 @@ export default async function StorePage({ params }: Props) {
               </a>
             )}
           </div>
-          {info.length > 0 && (
+          {(info.length > 0 || status) && (
             <ul className="mt-3 flex flex-wrap gap-2 text-xs text-stone-600">
+              {status && (
+                <li>
+                  <a href="#sobre" className="inline-flex items-center gap-1.5 rounded-full bg-white/70 px-3 py-1.5 font-medium ring-1 ring-white">
+                    <span className={`h-2 w-2 rounded-full ${status.open ? "bg-emerald-500 shadow-[0_0_0_3px_rgb(16_185_129/0.2)]" : "bg-stone-400"}`} aria-hidden />
+                    <span className={status.open ? "text-emerald-700" : "text-stone-600"}>{status.text}</span>
+                  </a>
+                </li>
+              )}
               {info.map(({ icon: Icon, text, href }) => (
                 <li key={text}>
                   {href ? (
@@ -133,10 +144,33 @@ export default async function StorePage({ params }: Props) {
           </section>
         ))}
 
-        {store.description && (
-          <section className="surface mt-12 rounded-3xl border p-6">
-            <h2 className="mb-2 text-lg font-semibold tracking-tight text-stone-900">Sobre a {store.name}</h2>
-            <p className="whitespace-pre-line text-sm leading-relaxed text-stone-600">{store.description}</p>
+        {(store.description || hours || store.delivery_area) && (
+          <section id="sobre" className="surface mt-12 grid scroll-mt-24 gap-6 rounded-3xl border p-6 md:grid-cols-[1.4fr_1fr]">
+            <div>
+              <h2 className="mb-2 text-lg font-semibold tracking-tight text-stone-900">Sobre a {store.name}</h2>
+              {store.description && <p className="whitespace-pre-line text-sm leading-relaxed text-stone-600">{store.description}</p>}
+              {store.delivery_area && (
+                <p className="mt-4 flex items-start gap-2 text-sm text-stone-600">
+                  <Truck className="mt-0.5 h-4 w-4 shrink-0 text-brand-500" aria-hidden />
+                  <span><b className="font-medium text-stone-800">Entregamos em:</b> {store.delivery_area}</span>
+                </p>
+              )}
+            </div>
+            {hours && (
+              <div>
+                <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold text-stone-900"><Clock className="h-4 w-4 text-brand-500" aria-hidden /> Horários</h3>
+                <dl className="divide-y divide-stone-200/60 text-sm">
+                  {DAYS.map(({ key, long }) => (
+                    <div key={key} className="flex justify-between py-1.5">
+                      <dt className="capitalize text-stone-600">{long}</dt>
+                      <dd className={hours[key].open ? "tabular-nums text-stone-900" : "text-stone-400"}>
+                        {hours[key].open ? `${fmtTime(hours[key].from)} – ${fmtTime(hours[key].to)}` : "Fechado"}
+                      </dd>
+                    </div>
+                  ))}
+                </dl>
+              </div>
+            )}
           </section>
         )}
       </main>
