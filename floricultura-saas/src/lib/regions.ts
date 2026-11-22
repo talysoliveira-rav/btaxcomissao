@@ -73,7 +73,8 @@ export function compactIbgeCities(data: unknown): City[] {
         id: Number(m?.id),
         nome: String(m?.nome ?? ""),
         ri: ri && Number.isInteger(Number(ri.id)) ? Number(ri.id) : null,
-        riNome: ri?.nome ? String(ri.nome) : null,
+        // o IBGE devolve alguns travessões quebrados ("Cornélio Procópio ¿ Bandeirantes")
+        riNome: ri?.nome ? String(ri.nome).replace(/\s*¿\s*/g, " – ") : null,
       };
     })
     .filter((c) => Number.isInteger(c.id) && c.nome)
