@@ -201,7 +201,6 @@ body {
   /* Um card com um menu aberto fica acima dos vizinhos (o vidro cria camadas próprias) */
   .surface:has(details[open]) { position: relative; z-index: 20; }
 
-  .logo-mark { background-image: var(--rose-gradient); }
 }
 
 /* Entrada suave de cada página */
