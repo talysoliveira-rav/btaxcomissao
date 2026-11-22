@@ -5,21 +5,10 @@ import { createClient } from "@/lib/supabase/server";
 import { ButtonLink, Card, Empty, PageHeader, Table } from "@/components/ui";
 import { dateBR, weekdayBR, whatsappLink } from "@/lib/format";
 import type { UpcomingDate } from "@/lib/types";
+import { commercialDates } from "@/lib/commercial-dates";
+import { todayISO } from "@/lib/format";
 
 export const metadata = { title: "Datas especiais" };
-
-const COMMERCIAL = [
-  { m: 3, d: 8, t: "Dia Internacional da Mulher" },
-  { m: 6, d: 12, t: "Dia dos Namorados" },
-  { m: 11, d: 2, t: "Finados" },
-  { m: 12, d: 25, t: "Natal" },
-];
-
-function mothersDay(year: number) {
-  // 2º domingo de maio
-  const first = new Date(Date.UTC(year, 4, 1)).getUTCDay();
-  return 1 + ((7 - first) % 7) + 7;
-}
 
 export default async function DatesPage({ searchParams }: { searchParams: Promise<{ dias?: string }> }) {
   const sp = await searchParams;
@@ -29,15 +18,7 @@ export default async function DatesPage({ searchParams }: { searchParams: Promis
   const { data } = await supabase.rpc("upcoming_special_dates", { p_org: org.id, p_days: days });
   const dates = (data ?? []) as UpcomingDate[];
 
-  const now = new Date();
-  const year = now.getFullYear();
-  const commercial = [...COMMERCIAL, { m: 5, d: mothersDay(year), t: "Dia das Mães" }]
-    .map((c) => {
-      let date = new Date(Date.UTC(year, c.m - 1, c.d));
-      if (date.getTime() < Date.UTC(year, now.getMonth(), now.getDate())) date = new Date(Date.UTC(year + 1, c.m - 1, c.m === 5 ? mothersDay(year + 1) : c.d));
-      return { ...c, iso: date.toISOString().slice(0, 10), diff: Math.round((date.getTime() - Date.UTC(year, now.getMonth(), now.getDate())) / 86400000) };
-    })
-    .sort((a, b) => a.diff - b.diff);
+  const commercial = commercialDates(todayISO()).slice(0, 5);
 
   return (
     <>
@@ -75,9 +56,9 @@ export default async function DatesPage({ searchParams }: { searchParams: Promis
         <Card icon={CalendarDays} title="Datas comerciais">
           <ul className="space-y-2 text-sm">
             {commercial.map((c) => (
-              <li key={c.t} className="flex justify-between">
-                <span>{c.t}</span>
-                <span className="text-stone-500">{dateBR(c.iso).slice(0, 5)} · {c.diff === 0 ? "hoje" : `${c.diff} dias`}</span>
+              <li key={c.key} className="flex justify-between">
+                <span>{c.title}</span>
+                <span className="text-stone-500">{dateBR(c.iso).slice(0, 5)} · {c.daysUntil === 0 ? "hoje" : `${c.daysUntil} dias`}</span>
               </li>
             ))}
           </ul>

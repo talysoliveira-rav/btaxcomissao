@@ -93,6 +93,7 @@ export type Supply = {
   min_quantity: number;
   cost: number;
   shelf_life_days: number | null;
+  purchase_multiple: number;
   active: boolean;
   supply_categories?: { name: string } | null;
 };

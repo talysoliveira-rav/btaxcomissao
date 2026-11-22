@@ -18,8 +18,11 @@ export function SupplyFields({ s, categories }: { s?: Supply; categories: { id: 
       </Field>
       <Field label="Custo unitário (R$)"><Input name="cost" inputMode="decimal" defaultValue={s?.cost ?? ""} /></Field>
       <Field label="Estoque mínimo"><Input name="min_quantity" inputMode="decimal" defaultValue={s?.min_quantity ?? ""} /></Field>
-      <Field label="Validade média (dias)" hint="Flores frescas: usado para calcular o vencimento dos lotes." className="col-span-2">
+      <Field label="Validade média (dias)" hint="Calcula o vencimento dos lotes.">
         <Input name="shelf_life_days" type="number" min={1} defaultValue={s?.shelf_life_days ?? ""} />
+      </Field>
+      <Field label="Vendido em múltiplos de" hint="Ex.: 20 se vem em maço de 20. Avulso = 1.">
+        <Input name="purchase_multiple" inputMode="decimal" defaultValue={s?.purchase_multiple ?? 1} />
       </Field>
     </div>
   );

@@ -1,9 +1,10 @@
 import Link from "next/link";
-import { ArrowLeftRight, Boxes, Hourglass } from "lucide-react";
+import { ArrowLeftRight, Boxes, Hourglass, ShoppingBasket } from "lucide-react";
 
 const TABS = [
   { key: "insumos", href: "/app/estoque", label: "Insumos", icon: Boxes },
   { key: "perecibilidade", href: "/app/estoque/perecibilidade", label: "Perecibilidade", icon: Hourglass },
+  { key: "compras", href: "/app/estoque/compras", label: "Compras", icon: ShoppingBasket },
   { key: "movimentacoes", href: "/app/estoque/movimentacoes", label: "Movimentações", icon: ArrowLeftRight },
 ] as const;
 

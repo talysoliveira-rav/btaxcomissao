@@ -14,6 +14,7 @@ function supplyRow(fd: FormData) {
     min_quantity: decimal(fd, "min_quantity"),
     cost: decimal(fd, "cost"),
     shelf_life_days: shelf ? Number(shelf) : null,
+    purchase_multiple: Math.max(0.01, decimal(fd, "purchase_multiple", 1) || 1),
   };
 }
 
@@ -103,4 +104,25 @@ export async function registerBatchLoss(fd: FormData) {
   });
   if (error) throw new Error(error.message);
   revalidatePath("/app", "layout");
+}
+
+/** Registra várias entradas de uma vez (depois de fazer as compras da lista). */
+export async function receiveMany(items: { supply_id: string; quantity: number; unit_cost: number; supplier: string | null }[]): Promise<{ error?: string; count?: number }> {
+  const supabase = await createClient();
+  let count = 0;
+  for (const it of items.slice(0, 200)) {
+    const qty = Number(it.quantity);
+    if (!it.supply_id || !(qty > 0)) continue;
+    const { error } = await supabase.rpc("receive_supply", {
+      p_supply: it.supply_id,
+      p_quantity: qty,
+      p_unit_cost: Math.max(0, Number(it.unit_cost) || 0),
+      p_supplier: it.supplier?.trim() || null,
+      p_expires_at: null, // usa a validade média do insumo
+    });
+    if (error) return { error: `Parou no item ${count + 1}: ${error.message}`, count };
+    count++;
+  }
+  revalidatePath("/app", "layout");
+  return { count };
 }
