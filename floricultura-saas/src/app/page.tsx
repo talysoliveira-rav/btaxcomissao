@@ -278,8 +278,8 @@ export default function Home() {
                     </>
                   ) : (
                     <>
-                      <p className="mt-5 text-4xl font-semibold tracking-tight text-stone-900">Sob medida</p>
-                      <p className="mt-1 text-xs text-stone-500">Proposta feita com um especialista para a sua operação</p>
+                      <p className="mt-5 text-3xl font-semibold leading-tight tracking-tight text-stone-900">Converse com um especialista</p>
+                      <p className="mt-1 text-xs text-stone-500">Montamos uma proposta sob medida para a sua operação</p>
                     </>
                   )}
                   <ul className="mt-6 flex-1 space-y-2.5">
