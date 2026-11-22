@@ -148,7 +148,14 @@ export default async function PerishabilityPage() {
                     </span>
                   }
                 >
-                  <p className="-mt-1 mb-3 text-xs text-stone-500">{meta.hint}</p>
+                  <p className="-mt-1 mb-3 flex flex-wrap items-center justify-between gap-2 text-xs text-stone-500">
+                    {meta.hint}
+                    {(g.urgency === "critico" || g.urgency === "atencao") && (
+                      <Link href="/app/catalogo/ofertas" className="inline-flex items-center gap-1 rounded-full bg-[image:var(--rose-gradient)] px-2.5 py-1 font-semibold text-[#fff]">
+                        Criar oferta do dia →
+                      </Link>
+                    )}
+                  </p>
                   <ul className="divide-y divide-stone-200/60">
                     {g.items.map((b) => {
                       const uses = usesBySupply.get(b.supply_id) ?? [];

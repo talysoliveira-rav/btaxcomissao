@@ -6,6 +6,8 @@ import { ImageOff, Store } from "lucide-react";
 import { Badge, ButtonLink, Card, Empty, Input, PageHeader, Table, Button } from "@/components/ui";
 import { ShareLink } from "@/components/share-link";
 import { siteUrl, storePath } from "@/lib/site";
+import { offerActive, offerCandidates } from "@/lib/offers-server";
+import { CatalogTabs } from "./tabs";
 import { SubmitButton } from "@/components/submit-button";
 import { money } from "@/lib/format";
 import type { Product } from "@/lib/types";
@@ -22,7 +24,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
   const supabase = await createClient();
   let q = supabase.from("products").select("*, product_components(quantity, supplies(cost))").eq("org_id", org.id).order("active", { ascending: false }).order("name");
   if (sp.q) q = q.ilike("name", `%${sp.q}%`);
-  const [{ data }, base] = await Promise.all([q, siteUrl()]);
+  const [{ data }, base, candidates] = await Promise.all([q, siteUrl(), offerCandidates(org.id)]);
   const products = (data ?? []) as Row[];
 
   return (
@@ -38,6 +40,7 @@ export default async function CatalogPage({ searchParams }: { searchParams: Prom
           )
         }
       />
+      <CatalogTabs active="produtos" offerAlerts={candidates.filter((c) => !offerActive(c.product)).length} />
       {org.storefront_enabled && (
         <Card className="mb-6" icon={Store} title="Link da sua vitrine">
           <ShareLink url={`${base}${storePath(org.slug)}`} message={`Conheça nossos buquês e arranjos 💐 ${org.name}`} />

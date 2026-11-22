@@ -110,6 +110,19 @@ export type Product = {
   show_in_store: boolean;
   featured: boolean;
   sort_order: number;
+  offer_price: number | null;
+  offer_until: string | null;
+};
+
+export type Selection = {
+  id: string;
+  code: string;
+  title: string;
+  customer_id: string | null;
+  customer_name: string | null;
+  note: string | null;
+  expires_at: string;
+  created_at: string;
 };
 
 export type Driver = {

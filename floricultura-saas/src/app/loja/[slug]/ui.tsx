@@ -2,8 +2,9 @@
 import Link from "next/link";
 import { Flower2 } from "lucide-react";
 import { LogoMark } from "@/components/logo";
-import { priceLabel, whatsappLink } from "@/lib/format";
-import type { Store, StoreProduct } from "@/lib/storefront";
+import { whatsappLink } from "@/lib/format";
+import { WhatsAppLink } from "@/components/track";
+import { currentPrice, priceText, type Store, type StoreProduct } from "@/lib/storefront";
 import { productPath, storePath } from "@/lib/site";
 
 export function WhatsAppIcon({ className = "h-4 w-4" }: { className?: string }) {
@@ -24,7 +25,7 @@ export function StoreAvatar({ store, className = "h-10 w-10" }: { store: Pick<St
   );
 }
 
-export function StoreHeader({ store, back }: { store: Store; back?: boolean }) {
+export function StoreHeader({ store, back }: { store: Pick<Store, "name" | "slug" | "whatsapp" | "logo_url">; back?: boolean }) {
   const wa = whatsappLink(store.whatsapp, `Olá, ${store.name}! Vim pela vitrine e gostaria de ajuda.`);
   return (
     <header className="glass-strong sticky top-0 z-30 border-b border-white/70">
@@ -34,9 +35,9 @@ export function StoreHeader({ store, back }: { store: Store; back?: boolean }) {
           <span className="truncate font-semibold tracking-tight text-stone-900">{back ? `← ${store.name}` : store.name}</span>
         </Link>
         {wa && (
-          <a href={wa} target="_blank" className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#25D366] px-3.5 py-2 text-sm font-medium text-[#fff] shadow-sm transition hover:brightness-95 active:scale-[0.98]">
+          <WhatsAppLink href={wa} slug={store.slug} className="ml-auto inline-flex shrink-0 items-center gap-1.5 rounded-full bg-[#25D366] px-3.5 py-2 text-sm font-medium text-[#fff] shadow-sm transition hover:brightness-95 active:scale-[0.98]">
             <WhatsAppIcon /> <span className="hidden sm:inline">Falar no WhatsApp</span><span className="sm:hidden">WhatsApp</span>
-          </a>
+          </WhatsAppLink>
         )}
       </div>
     </header>
@@ -45,6 +46,7 @@ export function StoreHeader({ store, back }: { store: Store; back?: boolean }) {
 
 export function ProductCard({ slug, p, large = false }: { slug: string; p: StoreProduct; large?: boolean }) {
   const img = p.images[0];
+  const { original, off } = currentPrice(p);
   return (
     <Link href={productPath(slug, p.id)} className="group block">
       <div className={`relative overflow-hidden rounded-2xl bg-stone-100 ${large ? "aspect-[4/5]" : "aspect-[4/5]"}`}>
@@ -60,12 +62,23 @@ export function ProductCard({ slug, p, large = false }: { slug: string; p: Store
             <Flower2 className="h-10 w-10" strokeWidth={1.25} aria-hidden />
           </span>
         )}
-        {p.featured && <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-brand-700 shadow-sm">Destaque</span>}
+        {off ? (
+          <span className="absolute left-2 top-2 rounded-full bg-[image:var(--rose-gradient)] px-2 py-0.5 text-[11px] font-semibold text-[#fff] shadow-sm">−{off}%</span>
+        ) : (
+          p.featured && <span className="absolute left-2 top-2 rounded-full bg-white/90 px-2 py-0.5 text-[11px] font-medium text-brand-700 shadow-sm">Destaque</span>
+        )}
         {p.images.length > 1 && <span className="absolute bottom-2 right-2 rounded-full bg-black/50 px-2 py-0.5 text-[11px] text-[#fff]">{p.images.length} fotos</span>}
       </div>
       <div className="mt-2 px-0.5">
         <p className="line-clamp-2 text-sm font-medium leading-snug text-stone-900">{p.name}</p>
-        <p className={`mt-0.5 text-sm ${p.price_mode === "sob_consulta" ? "text-stone-500" : "font-semibold text-brand-700"}`}>{priceLabel(p.price, p.price_mode)}</p>
+        <p className={`mt-0.5 text-sm ${p.price_mode === "sob_consulta" ? "text-stone-500" : "font-semibold text-brand-700"}`}>
+          {priceText(p)}
+          {original != null && (
+            <span className="ml-1.5 text-xs font-normal text-stone-400 line-through">
+              {new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(original)}
+            </span>
+          )}
+        </p>
       </div>
     </Link>
   );

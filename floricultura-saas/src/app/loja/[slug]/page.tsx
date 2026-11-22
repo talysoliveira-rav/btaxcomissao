@@ -1,7 +1,8 @@
 /* eslint-disable @next/next/no-img-element -- fotos já otimizadas no envio */
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { AtSign, Clock, MapPin, Truck } from "lucide-react";
+import { AtSign, Clock, MapPin, Sparkles, Truck } from "lucide-react";
+import { Track, WhatsAppLink } from "@/components/track";
 import { whatsappLink } from "@/lib/format";
 import { DAYS, fmtTime, openStatus, parseHours } from "@/lib/hours";
 import { categorySlug, getStore, groupByCategory } from "@/lib/storefront";
@@ -32,7 +33,8 @@ export default async function StorePage({ params }: Props) {
   const data = await getStore(slug);
   if (!data) notFound();
   const { store, products } = data;
-  const featured = products.filter((p) => p.featured);
+  const offers = products.filter((p) => p.offer_price != null && Number(p.offer_price) < Number(p.price));
+  const featured = products.filter((p) => p.featured && !offers.includes(p));
   const groups = groupByCategory(products);
   const wa = whatsappLink(store.whatsapp, `Olá, ${store.name}! Vim pela vitrine e gostaria de ajuda para escolher.`);
   const hours = parseHours(store.business_hours);
@@ -46,6 +48,7 @@ export default async function StorePage({ params }: Props) {
 
   return (
     <div className="min-h-screen">
+      <Track slug={slug} kind="view_store" />
       <StoreHeader store={store} />
 
       {/* Capa */}
@@ -66,9 +69,9 @@ export default async function StorePage({ params }: Props) {
               {store.tagline && <p className="mt-1 text-stone-600">{store.tagline}</p>}
             </div>
             {wa && (
-              <a href={wa} target="_blank" className="btn-primary mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold sm:mt-0 sm:w-auto">
+              <WhatsAppLink href={wa} slug={slug} className="btn-primary mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl px-5 py-3 text-sm font-semibold sm:mt-0 sm:w-auto">
                 <WhatsAppIcon /> Pedir pelo WhatsApp
-              </a>
+              </WhatsAppLink>
             )}
           </div>
           {(info.length > 0 || status) && (
@@ -103,6 +106,9 @@ export default async function StorePage({ params }: Props) {
       {groups.length > 1 && (
         <nav aria-label="Categorias" className="glass sticky top-[57px] z-20 mt-6 border-y border-white/60">
           <ul className="mx-auto flex max-w-6xl gap-2 overflow-x-auto px-4 py-2.5 [scrollbar-width:none]">
+            {offers.length > 0 && (
+              <li><a href="#ofertas" className="block whitespace-nowrap rounded-full bg-[image:var(--rose-gradient)] px-3.5 py-1.5 text-sm font-medium text-[#fff]">Ofertas do dia</a></li>
+            )}
             {featured.length > 0 && (
               <li><a href="#destaques" className="block whitespace-nowrap rounded-full bg-white/80 px-3.5 py-1.5 text-sm font-medium text-brand-700 ring-1 ring-brand-100">Destaques</a></li>
             )}
@@ -120,6 +126,24 @@ export default async function StorePage({ params }: Props) {
       <main className="mx-auto max-w-6xl px-4">
         {products.length === 0 && (
           <p className="py-20 text-center text-stone-500">Em breve, novidades por aqui. Fale com a gente pelo WhatsApp!</p>
+        )}
+
+        {offers.length > 0 && (
+          <section id="ofertas" className="scroll-mt-32 pt-8">
+            <div className="mb-3 flex items-end justify-between gap-2">
+              <h2 className="flex items-center gap-1.5 text-lg font-semibold tracking-tight text-stone-900">
+                <Sparkles className="h-5 w-5 text-brand-500" aria-hidden /> Ofertas do dia
+              </h2>
+              <span className="text-xs text-stone-500">Flores frescas com preço especial, enquanto durarem</span>
+            </div>
+            <div className="-mx-4 flex snap-x snap-mandatory gap-3 overflow-x-auto px-4 pb-2 [scrollbar-width:none]">
+              {offers.map((p) => (
+                <div key={p.id} className="w-[62%] shrink-0 snap-start sm:w-64">
+                  <ProductCard slug={slug} p={p} large />
+                </div>
+              ))}
+            </div>
+          </section>
         )}
 
         {featured.length > 0 && (
@@ -178,14 +202,14 @@ export default async function StorePage({ params }: Props) {
       <StoreFooter />
 
       {wa && (
-        <a
+        <WhatsAppLink
           href={wa}
-          target="_blank"
+          slug={slug}
           aria-label="Falar no WhatsApp"
           className="fixed bottom-5 right-5 z-40 grid h-14 w-14 place-items-center rounded-full bg-[#25D366] text-[#fff] shadow-[0_10px_30px_-8px_rgb(37_211_102/0.7)] transition hover:scale-105 sm:hidden"
         >
           <WhatsAppIcon className="h-7 w-7" />
-        </a>
+        </WhatsAppLink>
       )}
     </div>
   );
