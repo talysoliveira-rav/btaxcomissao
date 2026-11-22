@@ -3,8 +3,8 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import {
-  Boxes, CalendarHeart, ChartColumn, ClipboardList, Columns3, Flower2, Gem, House, Menu, PanelLeftClose, PanelLeftOpen,
-  Settings, Truck, Users, X, type LucideIcon,
+  Boxes, CalendarHeart, ChartColumn, ClipboardList, Columns3, Flower2, House, Menu, Moon, PanelLeftClose, PanelLeftOpen,
+  Settings, Sun, Truck, Users, X, type LucideIcon,
 } from "lucide-react";
 import { FLOWER_BY_SECTION } from "./flowers";
 
@@ -51,6 +51,13 @@ function useActive() {
 
 type Badges = Record<string, number>;
 
+/** Flor em traço fino, semitransparente, no canto do item selecionado (uma por aba). */
+function NavFlower({ href }: { href: string }) {
+  const section = href.split("/")[2] ?? "inicio";
+  const Flower = FLOWER_BY_SECTION[section] ?? FLOWER_BY_SECTION.inicio;
+  return <Flower key={href} className="nav-flower" strokeWidth={1.6} />;
+}
+
 function NavList({ collapsed = false, onNavigate, badges = {} }: { collapsed?: boolean; onNavigate?: () => void; badges?: Badges }) {
   const isActive = useActive();
   return (
@@ -85,11 +92,12 @@ function NavList({ collapsed = false, onNavigate, badges = {} }: { collapsed?: b
                       aria-hidden
                     />
                     {!collapsed && <span className="truncate">{label}</span>}
+                    {active && !collapsed && <NavFlower href={href} />}
                     {badge > 0 &&
                       (collapsed ? (
                         <span className="absolute right-1 top-1 h-2 w-2 rounded-full bg-orange-500 ring-2 ring-white" aria-label={`${badge} alerta(s)`} />
                       ) : (
-                        <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-orange-500 px-1.5 text-[11px] font-semibold text-white" aria-label={`${badge} alerta(s)`}>
+                        <span className="ml-auto grid h-5 min-w-5 place-items-center rounded-full bg-orange-500 px-1.5 text-[11px] font-semibold text-[#fff]" aria-label={`${badge} alerta(s)`}>
                           {badge}
                         </span>
                       ))}
@@ -104,49 +112,49 @@ function NavList({ collapsed = false, onNavigate, badges = {} }: { collapsed?: b
   );
 }
 
-/** Alterna entre destaque "vidro" e "rosa em degradê". */
-export function AccentToggle({ initial, compact = false }: { initial: "glass" | "gradient"; compact?: boolean }) {
-  const [accent, setAccent] = useState(initial);
-  const apply = (a: "glass" | "gradient") => {
-    setAccent(a);
-    setCookie("flora_accent", a);
-    document.getElementById("app-shell")?.setAttribute("data-accent", a);
+export type Theme = "light" | "dark";
+
+/** Tema claro/escuro. Salvo em cookie e aplicado no <html> sem recarregar. */
+export function ThemeToggle({ initial, compact = false }: { initial: Theme; compact?: boolean }) {
+  const [theme, setTheme] = useState<Theme>(initial);
+  const apply = (t: Theme) => {
+    setTheme(t);
+    setCookie("flora_theme", t);
+    document.documentElement.classList.toggle("dark", t === "dark");
   };
   if (compact) {
+    const next = theme === "dark" ? "light" : "dark";
     return (
       <button
         type="button"
-        onClick={() => apply(accent === "glass" ? "gradient" : "glass")}
-        title={accent === "glass" ? "Mudar para rosa em degradê" : "Mudar para vidro"}
-        aria-label="Alternar estilo de destaque"
+        onClick={() => apply(next)}
+        title={theme === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
+        aria-label={theme === "dark" ? "Mudar para tema claro" : "Mudar para tema escuro"}
         className="mx-auto grid h-9 w-9 place-items-center rounded-xl text-stone-500 transition hover:bg-white/70 hover:text-brand-600"
       >
-        <Gem className="h-4 w-4" strokeWidth={1.75} />
+        {theme === "dark" ? <Sun className="h-4 w-4" strokeWidth={1.75} /> : <Moon className="h-4 w-4" strokeWidth={1.75} />}
       </button>
     );
   }
   return (
-    <div role="radiogroup" aria-label="Estilo de destaque" className="grid grid-cols-2 gap-1 rounded-xl bg-stone-900/5 p-1 text-xs font-medium">
+    <div role="radiogroup" aria-label="Tema" className="grid grid-cols-2 gap-1 rounded-xl bg-stone-200/60 p-1 text-xs font-medium">
       {(
         [
-          ["glass", "Vidro"],
-          ["gradient", "Rosa"],
+          ["light", "Claro", Sun],
+          ["dark", "Escuro", Moon],
         ] as const
-      ).map(([key, label]) => (
+      ).map(([key, label, Icon]) => (
         <button
           key={key}
           type="button"
           role="radio"
-          aria-checked={accent === key}
+          aria-checked={theme === key}
           onClick={() => apply(key)}
           className={`flex items-center justify-center gap-1.5 rounded-lg py-1.5 transition-all duration-300 ${
-            accent === key ? "accent-active" : "text-stone-500 hover:text-stone-800"
+            theme === key ? "bg-white text-stone-900 shadow-sm" : "text-stone-500 hover:text-stone-800"
           }`}
         >
-          <span
-            className={`h-2.5 w-2.5 rounded-full ${key === "glass" ? "border border-brand-300 bg-white" : "bg-[image:var(--rose-gradient)]"}`}
-            aria-hidden
-          />
+          <Icon className="h-3.5 w-3.5" strokeWidth={1.75} aria-hidden />
           {label}
         </button>
       ))}
@@ -157,7 +165,7 @@ export function AccentToggle({ initial, compact = false }: { initial: "glass" | 
 /** Barra lateral do desktop, recolhível. O estado fica salvo num cookie. */
 export function Sidebar({
   initialCollapsed,
-  initialAccent,
+  initialTheme,
   logo,
   logoCompact,
   orgSwitcher,
@@ -167,7 +175,7 @@ export function Sidebar({
 }: {
   badges?: Badges;
   initialCollapsed: boolean;
-  initialAccent: "glass" | "gradient";
+  initialTheme: Theme;
   logo: React.ReactNode;
   logoCompact: React.ReactNode;
   orgSwitcher: React.ReactNode;
@@ -196,7 +204,7 @@ export function Sidebar({
   return (
     <aside
       data-collapsed={collapsed}
-      className={`glass no-print relative hidden border-r border-white/70 shadow-[1px_0_0_rgb(231_229_228/0.6)] transition-[width] duration-300 ease-[var(--ease-out)] md:sticky md:top-0 md:z-30 md:flex md:h-screen md:shrink-0 md:flex-col ${
+      className={`glass no-print relative hidden border-r border-white/70 shadow-[1px_0_0_var(--surface-border)] transition-[width] duration-300 ease-[var(--ease-out)] md:sticky md:top-0 md:z-30 md:flex md:h-screen md:shrink-0 md:flex-col ${
         collapsed ? "md:w-[76px]" : "md:w-64"
       }`}
     >
@@ -210,7 +218,7 @@ export function Sidebar({
       </div>
 
       <div className={`space-y-3 border-t border-stone-200/60 ${collapsed ? "px-2 py-3" : "p-4"}`}>
-        <AccentToggle initial={initialAccent} compact={collapsed} />
+        <ThemeToggle initial={initialTheme} compact={collapsed} />
         {collapsed ? accountCompact : account}
       </div>
 
@@ -309,21 +317,5 @@ export function BottomTabs() {
         })}
       </ul>
     </nav>
-  );
-}
-
-/** Flor desenhada em traço fino, semitransparente, diferente em cada aba. */
-export function FlowerBackdrop() {
-  const path = usePathname();
-  const section = path.split("/")[2] ?? "inicio";
-  const Flower = FLOWER_BY_SECTION[section] ?? FLOWER_BY_SECTION.inicio;
-  return (
-    <div aria-hidden className="pointer-events-none fixed bottom-0 right-0 z-0 overflow-hidden print:hidden">
-      <Flower
-        key={section}
-        className="flower-watermark h-[340px] w-[340px] translate-x-[12%] translate-y-[8%] md:h-[520px] md:w-[520px]"
-        strokeWidth={0.9}
-      />
-    </div>
   );
 }

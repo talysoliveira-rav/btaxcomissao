@@ -138,7 +138,7 @@ export function OrderForm({
                 type="button"
                 key={m}
                 onClick={() => setCustomerMode(m)}
-                className={`rounded-full px-3 py-1 ${customerMode === m ? "bg-brand-600 text-white" : "bg-stone-100 text-stone-700"}`}
+                className={`rounded-full px-3 py-1 ${customerMode === m ? "bg-brand-600 text-[#fff]" : "bg-stone-100 text-stone-700"}`}
               >
                 {m === "existing" ? "Cliente cadastrado" : m === "new" ? "Novo cliente" : "Sem cadastro"}
               </button>
@@ -243,7 +243,7 @@ export function OrderForm({
                 type="button"
                 key={f}
                 onClick={() => setFulfillment(f)}
-                className={`rounded-full px-3 py-1 ${fulfillment === f ? "bg-brand-600 text-white" : "bg-stone-100 text-stone-700"}`}
+                className={`rounded-full px-3 py-1 ${fulfillment === f ? "bg-brand-600 text-[#fff]" : "bg-stone-100 text-stone-700"}`}
               >
                 {f === "entrega" ? <><Truck className="mr-1 inline h-4 w-4" aria-hidden />Entrega</> : <><Store className="mr-1 inline h-4 w-4" aria-hidden />Retirada na loja</>}
               </button>

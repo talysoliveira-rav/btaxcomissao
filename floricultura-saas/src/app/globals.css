@@ -1,15 +1,24 @@
 @import "tailwindcss";
 
+/* Tema escuro: classe .dark no <html> (escolhida pelo usuário e salva em cookie) */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @theme inline {
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
+
+/* Cores da marca como variáveis, para o tema escuro poder reajustá-las */
+@theme {
   --color-brand-50: #fdf2f6;
   --color-brand-100: #fce7ef;
   --color-brand-200: #fbcfe0;
   --color-brand-300: #f9a8c9;
+  --color-brand-400: #f472b6;
   --color-brand-500: #db2777;
   --color-brand-600: #be185d;
   --color-brand-700: #9d174d;
+  --color-brand-800: #831843;
   --color-leaf-600: #3f7d4e;
   --color-leaf-700: #2f6340;
 }
@@ -17,80 +26,174 @@
 :root {
   --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
   --rose-gradient: linear-gradient(135deg, #f472b6 0%, #db2777 48%, #a21caf 100%);
+  --page-bg: #faf8f6;
+  --page-glow-1: rgb(252 231 243 / 0.9);
+  --page-glow-2: rgb(243 232 255 / 0.8);
+  --page-glow-3: rgb(253 242 248 / 0.9);
+  --surface-bg: rgb(255 255 255 / 0.74);
+  --surface-border: rgb(255 255 255 / 0.75);
+  --surface-shadow: 0 1px 2px rgb(28 25 23 / 0.04), 0 10px 30px -14px rgb(157 23 77 / 0.16), inset 0 1px 0 rgb(255 255 255 / 0.8);
+  --glass-bg: rgb(255 255 255 / 0.68);
+  --glass-strong-bg: rgb(255 255 255 / 0.82);
+  --skeleton-bg: rgb(231 229 228 / 0.6);
+  --skeleton-shine: rgb(255 255 255 / 0.7);
+  color-scheme: light;
+}
+
+/* ---------- Tema escuro ---------- */
+.dark {
+  color-scheme: dark;
+  --page-bg: #120e15;
+  --page-glow-1: rgb(157 23 77 / 0.22);
+  --page-glow-2: rgb(126 34 206 / 0.16);
+  --page-glow-3: rgb(190 24 93 / 0.12);
+  --surface-bg: rgb(34 27 39 / 0.72);
+  --surface-border: rgb(255 255 255 / 0.07);
+  --surface-shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 14px 34px -16px rgb(0 0 0 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.05);
+  --glass-bg: rgb(27 21 32 / 0.7);
+  --glass-strong-bg: rgb(30 24 35 / 0.88);
+  --skeleton-bg: rgb(255 255 255 / 0.06);
+  --skeleton-shine: rgb(255 255 255 / 0.08);
+
+  /* "branco" vira a superfície escura; os tons de cinza se invertem */
+  --color-white: #221b27;
+  --color-stone-50: #1d1722;
+  --color-stone-100: #29212f;
+  --color-stone-200: #3a3141;
+  --color-stone-300: #4d4355;
+  --color-stone-400: #8b8092;
+  --color-stone-500: #a89fae;
+  --color-stone-600: #c5bdca;
+  --color-stone-700: #dbd4de;
+  --color-stone-800: #ece6ee;
+  --color-stone-900: #f8f4f9;
+
+  --color-brand-50: color-mix(in srgb, #db2777 14%, #1b1520);
+  --color-brand-100: color-mix(in srgb, #db2777 24%, #1b1520);
+  --color-brand-200: color-mix(in srgb, #db2777 40%, #1b1520);
+  --color-brand-300: color-mix(in srgb, #db2777 58%, #1b1520);
+  --color-brand-600: #f472b6;
+  --color-brand-700: #f9a8d4;
+  --color-brand-800: #fbcfe8;
+  --color-red-50: color-mix(in srgb, #ef4444 13%, #1b1520);
+  --color-red-100: color-mix(in srgb, #ef4444 22%, #1b1520);
+  --color-red-200: color-mix(in srgb, #ef4444 38%, #1b1520);
+  --color-red-300: color-mix(in srgb, #ef4444 55%, #1b1520);
+  --color-red-700: #fca5a5;
+  --color-red-800: #fecaca;
+  --color-orange-50: color-mix(in srgb, #f97316 13%, #1b1520);
+  --color-orange-100: color-mix(in srgb, #f97316 22%, #1b1520);
+  --color-orange-200: color-mix(in srgb, #f97316 38%, #1b1520);
+  --color-orange-300: color-mix(in srgb, #f97316 55%, #1b1520);
+  --color-orange-700: #fdba74;
+  --color-orange-800: #fed7aa;
+  --color-amber-50: color-mix(in srgb, #f59e0b 13%, #1b1520);
+  --color-amber-100: color-mix(in srgb, #f59e0b 22%, #1b1520);
+  --color-amber-200: color-mix(in srgb, #f59e0b 38%, #1b1520);
+  --color-amber-300: color-mix(in srgb, #f59e0b 55%, #1b1520);
+  --color-amber-700: #fcd34d;
+  --color-amber-800: #fde68a;
+  --color-emerald-50: color-mix(in srgb, #10b981 13%, #1b1520);
+  --color-emerald-100: color-mix(in srgb, #10b981 22%, #1b1520);
+  --color-emerald-200: color-mix(in srgb, #10b981 38%, #1b1520);
+  --color-emerald-300: color-mix(in srgb, #10b981 55%, #1b1520);
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #a7f3d0;
+  --color-sky-50: color-mix(in srgb, #0ea5e9 13%, #1b1520);
+  --color-sky-100: color-mix(in srgb, #0ea5e9 22%, #1b1520);
+  --color-sky-200: color-mix(in srgb, #0ea5e9 38%, #1b1520);
+  --color-sky-300: color-mix(in srgb, #0ea5e9 55%, #1b1520);
+  --color-sky-700: #7dd3fc;
+  --color-sky-800: #bae6fd;
+  --color-indigo-50: color-mix(in srgb, #6366f1 13%, #1b1520);
+  --color-indigo-100: color-mix(in srgb, #6366f1 22%, #1b1520);
+  --color-indigo-200: color-mix(in srgb, #6366f1 38%, #1b1520);
+  --color-indigo-300: color-mix(in srgb, #6366f1 55%, #1b1520);
+  --color-indigo-700: #a5b4fc;
+  --color-indigo-800: #c7d2fe;
+  --color-lime-50: color-mix(in srgb, #84cc16 13%, #1b1520);
+  --color-lime-100: color-mix(in srgb, #84cc16 22%, #1b1520);
+  --color-lime-200: color-mix(in srgb, #84cc16 38%, #1b1520);
+  --color-lime-300: color-mix(in srgb, #84cc16 55%, #1b1520);
+  --color-lime-700: #bef264;
+  --color-lime-800: #d9f99d;
+  --color-violet-50: color-mix(in srgb, #8b5cf6 13%, #1b1520);
+  --color-violet-100: color-mix(in srgb, #8b5cf6 22%, #1b1520);
+  --color-violet-200: color-mix(in srgb, #8b5cf6 38%, #1b1520);
+  --color-violet-300: color-mix(in srgb, #8b5cf6 55%, #1b1520);
+  --color-violet-700: #c4b5fd;
+  --color-violet-800: #ddd6fe;
 }
 
 body {
-  color: #1c1917;
-  background-color: #faf8f6;
+  color: var(--color-stone-900);
+  background-color: var(--page-bg);
   background-image:
-    radial-gradient(60rem 40rem at -10% -10%, rgb(252 231 243 / 0.9), transparent 60%),
-    radial-gradient(50rem 36rem at 110% 0%, rgb(243 232 255 / 0.8), transparent 55%),
-    radial-gradient(50rem 40rem at 100% 110%, rgb(253 242 248 / 0.9), transparent 60%);
+    radial-gradient(60rem 40rem at -10% -10%, var(--page-glow-1), transparent 60%),
+    radial-gradient(50rem 36rem at 110% 0%, var(--page-glow-2), transparent 55%),
+    radial-gradient(50rem 40rem at 100% 110%, var(--page-glow-3), transparent 60%);
   background-attachment: fixed;
   -webkit-font-smoothing: antialiased;
+  transition: background-color 0.4s var(--ease-out), color 0.4s var(--ease-out);
 }
 
 @layer components {
   /* Superfícies de vidro */
   .glass {
-    background-color: rgb(255 255 255 / 0.68);
+    background-color: var(--glass-bg);
     backdrop-filter: blur(18px) saturate(170%);
     -webkit-backdrop-filter: blur(18px) saturate(170%);
   }
   .glass-strong {
-    background-color: rgb(255 255 255 / 0.82);
+    background-color: var(--glass-strong-bg);
     backdrop-filter: blur(20px) saturate(180%);
     -webkit-backdrop-filter: blur(20px) saturate(180%);
   }
   .surface {
-    background-color: rgb(255 255 255 / 0.74);
+    background-color: var(--surface-bg);
     backdrop-filter: blur(14px) saturate(160%);
     -webkit-backdrop-filter: blur(14px) saturate(160%);
-    border-color: rgb(255 255 255 / 0.75);
-    box-shadow:
-      0 1px 2px rgb(28 25 23 / 0.04),
-      0 10px 30px -14px rgb(157 23 77 / 0.16),
-      inset 0 1px 0 rgb(255 255 255 / 0.8);
+    border-color: var(--surface-border);
+    box-shadow: var(--surface-shadow);
   }
 
-  /* Item ativo — estilo "vidro" (padrão) */
+  /* Item selecionado: rosa em degradê */
   .accent-active {
-    color: #9d174d;
-    background-image: linear-gradient(135deg, rgb(255 255 255 / 0.96) 0%, rgb(252 231 243 / 0.85) 100%);
-    backdrop-filter: blur(10px) saturate(180%);
-    -webkit-backdrop-filter: blur(10px) saturate(180%);
-    box-shadow:
-      0 10px 24px -12px rgb(190 24 93 / 0.5),
-      0 0 0 1px rgb(251 207 224 / 0.95),
-      inset 0 1px 0 #fff,
-      inset 0 -8px 16px -10px rgb(244 114 182 / 0.35);
-  }
-  .accent-active .accent-icon { color: #db2777; }
-
-  /* Item ativo — estilo "rosa em degradê" */
-  [data-accent="gradient"] .accent-active {
+    position: relative;
+    overflow: hidden;
+    isolation: isolate;
     color: #fff;
     background-image: var(--rose-gradient);
     box-shadow:
       0 10px 24px -10px rgb(219 39 119 / 0.65),
       inset 0 1px 0 rgb(255 255 255 / 0.35);
   }
-  [data-accent="gradient"] .accent-active .accent-icon { color: #fff; }
+  .accent-active .accent-icon { color: #fff; }
 
-  /* Botão principal acompanha o estilo escolhido */
+  /* Flor em traço fino dentro do item selecionado */
+  .nav-flower {
+    position: absolute;
+    right: -10px;
+    top: 50%;
+    z-index: -1;
+    width: 72px;
+    height: 72px;
+    color: #fff;
+    opacity: 0.42;
+    pointer-events: none;
+    transform: translateY(-50%) rotate(-12deg);
+    animation: nav-flower-in 0.6s var(--ease-out) both;
+  }
+
   .btn-primary {
     color: #fff;
-    background-color: #be185d;
-    box-shadow: 0 6px 16px -8px rgb(190 24 93 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.2);
-  }
-  .btn-primary:hover { background-color: #9d174d; }
-  [data-accent="gradient"] .btn-primary {
     background-image: var(--rose-gradient);
     background-size: 140% 140%;
     background-position: 0% 50%;
+    box-shadow: 0 6px 16px -8px rgb(219 39 119 / 0.6), inset 0 1px 0 rgb(255 255 255 / 0.25);
     transition: background-position 0.5s var(--ease-out), box-shadow 0.2s, transform 0.15s;
   }
-  [data-accent="gradient"] .btn-primary:hover {
+  .btn-primary:hover {
     background-position: 100% 50%;
     box-shadow: 0 10px 22px -8px rgb(219 39 119 / 0.7);
   }
@@ -99,14 +202,6 @@ body {
   .surface:has(details[open]) { position: relative; z-index: 20; }
 
   .logo-mark { background-image: var(--rose-gradient); }
-
-  /* Flor de fundo de cada aba */
-  .flower-watermark {
-    color: #be185d;
-    opacity: 0.075;
-    animation: flower-in 0.9s var(--ease-out) both;
-  }
-  [data-accent="gradient"] .flower-watermark { color: #a21caf; opacity: 0.085; }
 }
 
 /* Entrada suave de cada página */
@@ -114,8 +209,8 @@ body {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: none; }
 }
-@keyframes flower-in {
-  from { opacity: 0; transform: rotate(-6deg) scale(0.96); }
+@keyframes nav-flower-in {
+  from { opacity: 0; transform: translateY(-50%) rotate(-40deg) scale(0.7); }
 }
 @keyframes shimmer {
   100% { transform: translateX(100%); }
@@ -124,14 +219,14 @@ body {
 .skeleton {
   position: relative;
   overflow: hidden;
-  background-color: rgb(231 229 228 / 0.6);
+  background-color: var(--skeleton-bg);
 }
 .skeleton::after {
   content: "";
   position: absolute;
   inset: 0;
   transform: translateX(-100%);
-  background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.7), transparent);
+  background: linear-gradient(90deg, transparent, var(--skeleton-shine), transparent);
   animation: shimmer 1.3s infinite;
 }
 
@@ -145,7 +240,7 @@ body {
 
 @media print {
   .no-print { display: none !important; }
-  body { background: white; }
+  body { background: white; color: black; }
   .print-break { break-after: page; }
   .surface, .glass, .glass-strong { backdrop-filter: none; background: white; box-shadow: none; }
 }

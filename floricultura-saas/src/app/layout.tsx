@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { cookies } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
@@ -10,9 +11,10 @@ export const metadata: Metadata = {
   description: "Pedidos, entregas, estoque de flores e clientes em um só lugar.",
 };
 
-export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+export default async function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const dark = (await cookies()).get("flora_theme")?.value === "dark";
   return (
-    <html lang="pt-BR">
+    <html lang="pt-BR" className={dark ? "dark" : undefined}>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>{children}</body>
     </html>
   );

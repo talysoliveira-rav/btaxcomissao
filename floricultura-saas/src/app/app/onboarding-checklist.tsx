@@ -33,7 +33,7 @@ export async function OnboardingChecklist({ orgId }: { orgId: string }) {
   return (
     <section aria-labelledby="onb-title" className="mb-6 overflow-hidden rounded-xl border border-brand-200 bg-gradient-to-br from-brand-50 to-white shadow-sm">
       <header className="flex flex-wrap items-center gap-3 px-4 pb-3 pt-4">
-        <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 text-white">
+        <span className="grid h-9 w-9 place-items-center rounded-lg bg-brand-600 text-[#fff]">
           <Sparkles className="h-5 w-5" aria-hidden />
         </span>
         <div className="min-w-0 flex-1">
@@ -53,7 +53,7 @@ export async function OnboardingChecklist({ orgId }: { orgId: string }) {
             <Link href={s.href} className={`group flex items-center gap-3 px-4 py-3 transition hover:bg-white ${i === nextIdx ? "bg-white" : ""}`}>
               <span
                 className={`grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-semibold ${
-                  s.done ? "bg-emerald-500 text-white" : i === nextIdx ? "bg-brand-600 text-white" : "border border-stone-300 text-stone-400"
+                  s.done ? "bg-emerald-500 text-[#fff]" : i === nextIdx ? "bg-brand-600 text-[#fff]" : "border border-stone-300 text-stone-400"
                 }`}
               >
                 {s.done ? <Check className="h-3.5 w-3.5" aria-label="Concluído" /> : i + 1}

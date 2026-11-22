@@ -9,7 +9,7 @@ const variants = {
   secondary: "bg-white/80 text-stone-800 border border-stone-200 hover:bg-white hover:border-stone-300 shadow-sm",
   ghost: "text-stone-700 hover:bg-white/70",
   danger: "bg-white text-red-700 border border-red-200 hover:bg-red-50",
-  leaf: "bg-leaf-600 text-white hover:bg-leaf-700",
+  leaf: "bg-leaf-600 text-[#fff] hover:bg-leaf-700",
 };
 type Variant = keyof typeof variants;
 const btnBase =

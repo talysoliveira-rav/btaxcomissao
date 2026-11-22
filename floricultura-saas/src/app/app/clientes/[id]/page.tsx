@@ -38,7 +38,7 @@ export default async function CustomerPage({ params }: { params: Promise<{ id: s
         subtitle={<Link href="/app/clientes" className="hover:underline">← Clientes</Link>}
         actions={
           <>
-            {wa && <a href={wa} target="_blank" className="rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-medium text-white hover:bg-emerald-700">WhatsApp</a>}
+            {wa && <a href={wa} target="_blank" className="rounded-lg bg-emerald-600 px-3.5 py-2 text-sm font-medium text-[#fff] hover:bg-emerald-700">WhatsApp</a>}
             <ButtonLink href="/app/pedidos/novo">+ Novo pedido</ButtonLink>
           </>
         }

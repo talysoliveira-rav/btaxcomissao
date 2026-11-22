@@ -12,7 +12,7 @@ const features = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-gradient-to-b from-brand-50 to-[#faf9f7]">
+    <div className="min-h-screen bg-gradient-to-b from-brand-50 to-stone-50">
       <header className="mx-auto flex max-w-6xl items-center justify-between px-6 py-5">
         <Logo className="text-lg" />
         <nav className="flex items-center gap-2">

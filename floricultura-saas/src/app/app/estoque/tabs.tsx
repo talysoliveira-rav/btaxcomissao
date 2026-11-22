@@ -22,7 +22,7 @@ export function StockTabs({ active, alerts = 0 }: { active: (typeof TABS)[number
           <Icon className="accent-icon h-4 w-4" strokeWidth={1.75} aria-hidden />
           {label}
           {key === "perecibilidade" && alerts > 0 && (
-            <span className="ml-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-orange-500 px-1.5 text-[11px] font-semibold text-white">{alerts}</span>
+            <span className="ml-0.5 grid h-5 min-w-5 place-items-center rounded-full bg-orange-500 px-1.5 text-[11px] font-semibold text-[#fff]">{alerts}</span>
           )}
         </Link>
       ))}

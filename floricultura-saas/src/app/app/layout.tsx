@@ -4,7 +4,7 @@ import { LogOut } from "lucide-react";
 import { getOrgContext } from "@/lib/org";
 import { perishAlertCount } from "@/lib/perishability-server";
 import { Logo } from "@/components/logo";
-import { AccentToggle, BottomTabs, FlowerBackdrop, MobileDrawer, Sidebar } from "@/components/nav";
+import { BottomTabs, MobileDrawer, Sidebar, ThemeToggle } from "@/components/nav";
 import { OrgSwitcher } from "@/components/org-switcher";
 import { signOut } from "@/app/(auth)/actions";
 
@@ -12,7 +12,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const ctx = await getOrgContext();
   const jar = await cookies();
   const collapsed = jar.get("flora_sidebar")?.value === "collapsed";
-  const accent = jar.get("flora_accent")?.value === "gradient" ? "gradient" : "glass";
+  const theme = jar.get("flora_theme")?.value === "dark" ? "dark" : "light";
   const badges = { "/app/estoque": await perishAlertCount(ctx.org.id) };
 
   const account = (
@@ -40,12 +40,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
   const orgSwitcher = <OrgSwitcher current={ctx.org.id} orgs={ctx.orgs} />;
 
   return (
-    <div id="app-shell" data-accent={accent} className="relative min-h-screen md:flex">
-      <FlowerBackdrop />
+    <div id="app-shell" className="relative min-h-screen md:flex">
 
       <Sidebar
         initialCollapsed={collapsed}
-        initialAccent={accent}
+        initialTheme={theme}
         logo={<Logo />}
         logoCompact={<Logo compact />}
         orgSwitcher={orgSwitcher}
@@ -61,7 +60,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           header={<Logo />}
           footer={
             <>
-              <AccentToggle initial={accent} />
+              <ThemeToggle initial={theme} />
               {account}
             </>
           }
