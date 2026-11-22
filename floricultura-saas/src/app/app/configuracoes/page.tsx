@@ -1,3 +1,4 @@
+import Link from "next/link";
 import QRCode from "qrcode";
 import { Bike, Download, Globe, QrCode, Store, Tag, Users } from "lucide-react";
 import { ShareLink } from "@/components/share-link";
@@ -34,7 +35,7 @@ export default async function SettingsPage() {
 
   return (
     <>
-      <PageHeader title="Configurações" />
+      <PageHeader title="Configurações" actions={<Link href="/redefinir-senha" className="text-sm font-medium text-brand-700 hover:underline">Alterar minha senha</Link>} />
 
       <section id="vitrine" className="mb-6 grid scroll-mt-6 gap-6 lg:grid-cols-3">
         <Card className="lg:col-span-2" icon={Globe} title="Vitrine online">

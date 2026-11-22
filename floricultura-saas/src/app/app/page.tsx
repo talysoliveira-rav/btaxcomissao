@@ -10,7 +10,8 @@ import { OnboardingChecklist } from "./onboarding-checklist";
 
 export const metadata = { title: "Início" };
 
-export default async function Dashboard() {
+export default async function Dashboard({ searchParams }: { searchParams: Promise<{ senha?: string }> }) {
+  const { senha } = await searchParams;
   const { org } = await getOrgContext();
   const supabase = await createClient();
   const today = todayISO();
@@ -59,6 +60,9 @@ export default async function Dashboard() {
         }
       />
 
+      {senha === "ok" && (
+        <p role="status" className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-2.5 text-sm text-emerald-800">Senha alterada com sucesso.</p>
+      )}
       {!onboardingHidden && <OnboardingChecklist orgId={org.id} />}
 
       <div className="grid grid-cols-2 gap-3 md:gap-4 lg:grid-cols-4">
