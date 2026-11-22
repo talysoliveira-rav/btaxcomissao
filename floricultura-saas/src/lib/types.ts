@@ -13,6 +13,27 @@ export type Organization = {
   document: string | null;
   address: string | null;
   delivery_fee_default: number;
+  storefront_enabled: boolean;
+  tagline: string | null;
+  store_description: string | null;
+  whatsapp: string | null;
+  instagram: string | null;
+  opening_hours: string | null;
+  delivery_area: string | null;
+  logo_url: string | null;
+  cover_url: string | null;
+};
+
+export type PriceMode = "exato" | "a_partir_de" | "sob_consulta";
+
+export type ProductImage = {
+  id: string;
+  product_id: string;
+  path: string;
+  thumb_path: string | null;
+  url: string;
+  thumb_url: string | null;
+  position: number;
 };
 
 export type Customer = {
@@ -83,6 +104,10 @@ export type Product = {
   image_url: string | null;
   sku: string | null;
   active: boolean;
+  price_mode: PriceMode;
+  show_in_store: boolean;
+  featured: boolean;
+  sort_order: number;
 };
 
 export type Driver = {

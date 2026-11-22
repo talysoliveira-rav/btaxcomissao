@@ -1,4 +1,8 @@
-import { Bike, Store, Tag, Users } from "lucide-react";
+import QRCode from "qrcode";
+import { Bike, Download, Globe, QrCode, Store, Tag, Users } from "lucide-react";
+import { ShareLink } from "@/components/share-link";
+import { siteUrl, storePath } from "@/lib/site";
+import { StorefrontForm } from "./storefront-form";
 import { getOrgContext } from "@/lib/org";
 import { createClient } from "@/lib/supabase/server";
 import { Badge, Button, Card, Field, Input, PageHeader, Select, Table } from "@/components/ui";
@@ -24,10 +28,44 @@ export default async function SettingsPage() {
   const ids = (members ?? []).map((m: { user_id: string }) => m.user_id);
   const { data: profiles } = await supabase.from("profiles").select("id, full_name, email").in("id", ids.length ? ids : ["00000000-0000-0000-0000-000000000000"]);
   const profileMap = new Map((profiles ?? []).map((p: { id: string; full_name: string | null; email: string | null }) => [p.id, p]));
+  const base = await siteUrl();
+  const storeUrl = `${base}${storePath(org.slug)}`;
+  const qrSvg = await QRCode.toString(storeUrl, { type: "svg", margin: 1, color: { dark: "#9d174d", light: "#ffffff" } });
 
   return (
     <>
       <PageHeader title="Configurações" />
+
+      <section id="vitrine" className="mb-6 grid scroll-mt-6 gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-2" icon={Globe} title="Vitrine online">
+          <p className="mb-4 text-sm text-stone-600">
+            Uma página com seus buquês, arranjos e cestas para enviar aos clientes. Eles escolhem pelas fotos e tocam em
+            “Pedir”, que abre o seu WhatsApp com a mensagem pronta.
+          </p>
+          <StorefrontForm org={org} baseUrl={base} disabled={!isAdmin} />
+        </Card>
+        <Card icon={QrCode} title="Compartilhar">
+          {org.storefront_enabled ? (
+            <>
+              <ShareLink url={storeUrl} message={`Conheça nossos buquês e arranjos — ${org.name}`} />
+              <div className="mt-4 rounded-xl bg-white p-3 text-center">
+                <div className="mx-auto w-40 [&_svg]:h-auto [&_svg]:w-full" dangerouslySetInnerHTML={{ __html: qrSvg }} />
+                <p className="mt-2 text-xs text-stone-500">Para o balcão, cartões e bio do Instagram</p>
+                <a
+                  href={`data:image/svg+xml;charset=utf-8,${encodeURIComponent(qrSvg)}`}
+                  download={`qrcode-${org.slug}.svg`}
+                  className="mt-2 inline-flex items-center gap-1 text-xs font-medium text-brand-700 hover:underline"
+                >
+                  <Download className="h-3.5 w-3.5" aria-hidden /> Baixar QR code
+                </a>
+              </div>
+            </>
+          ) : (
+            <p className="text-sm text-stone-500">Ative a vitrine para gerar o link e o QR code.</p>
+          )}
+        </Card>
+      </section>
+
       <div className="grid gap-6 lg:grid-cols-2">
         <Card icon={Store} title="Dados da floricultura">
           <form action={updateOrganization} className="space-y-3">

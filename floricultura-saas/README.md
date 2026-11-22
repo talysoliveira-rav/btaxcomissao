@@ -11,6 +11,7 @@ Sistema multi-loja (multi-tenant) para floriculturas: **pedidos e entregas**, **
 | **Início** | Entregas do dia, pedidos aguardando produção, estoque baixo, lotes vencendo, datas especiais próximas, vendas do mês |
 | **Pedidos** | Cadastro com cliente (existente/novo/sem cadastro), itens do catálogo ou avulsos, entrega/retirada, data + turno/horário, destinatário, cartão de mensagem (com sugestões), entrega anônima, pagamento, taxa e desconto. Fluxo de status `Novo → Confirmado → Em produção → Pronto → Em rota → Entregue` (ou Cancelado), histórico, duplicar pedido, aviso por WhatsApp, impressão da ficha de produção + cartão |
 | **Entregas** | Agenda por dia agrupada por turno, filtro por entregador, atribuição rápida, “Saiu p/ entrega” / “Entregue”, valor a cobrar, folha de rota imprimível |
+| **Vitrine online** | Página pública da floricultura (`/loja/<endereço>`) com capa, destaques, categorias e página de cada produto com galeria de fotos. O botão “Pedir pelo WhatsApp” abre a conversa com o produto já na mensagem. Link com prévia (foto, nome e preço) no WhatsApp e QR code para o balcão/Instagram |
 | **Catálogo** | Produtos com **ficha técnica** (insumos por unidade), custo, margem e quantas unidades dá para montar com o estoque atual |
 | **Estoque** | Insumos (flores, folhagens, vasos, fitas…), **entrada por lote com validade**, perdas, saídas, inventário, descarte de lote vencido, histórico de movimentações. **Baixa automática** quando o pedido entra em produção e **estorno** se for cancelado (consumo FIFO pela validade) |
 | **Clientes** | Cadastro, vários endereços (reaproveitados no pedido), datas especiais, histórico e ticket médio |
@@ -24,7 +25,7 @@ Um usuário pode participar de várias floriculturas (seletor no menu lateral). 
 
 ### 1. Supabase
 1. Crie um projeto em [supabase.com](https://supabase.com) (região São Paulo).
-2. **SQL Editor → New query** → cole e rode, em ordem, o **conteúdo** de `supabase/migrations/0001_schema.sql` e `0002_security_hardening.sql`.
+2. **SQL Editor → New query** → cole e rode, em ordem, o **conteúdo** de cada arquivo em `supabase/migrations/` (0001, 0002, 0003…).
    ⚠️ Use um projeto só do Florescer: o schema cria `profiles`, `is_admin()` e o trigger `on_auth_user_created`, que conflitam com outros sistemas no mesmo banco.
    (Ou, com a CLI: `supabase link` + `supabase db push`.)
 3. Em **Authentication → URL Configuration**, defina o *Site URL* (ex.: `http://localhost:3000` e depois o domínio da Vercel) e adicione `<site>/auth/callback` em *Redirect URLs*.

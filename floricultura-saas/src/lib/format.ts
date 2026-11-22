@@ -1,4 +1,4 @@
-import type { DeliveryPeriod, OrderStatus, PaymentStatus, StockMovementType } from "./types";
+import type { DeliveryPeriod, OrderStatus, PaymentStatus, PriceMode, StockMovementType } from "./types";
 
 const brl = new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" });
 export const money = (v: number | string | null | undefined) => brl.format(Number(v ?? 0));
@@ -92,4 +92,16 @@ export function formatAddress(o: {
 }) {
   const line = [o.address_street, o.address_number].filter(Boolean).join(", ");
   return [line, o.address_complement, o.address_neighborhood, o.address_city].filter(Boolean).join(" — ");
+}
+
+export const PRICE_MODE_LABEL: Record<PriceMode, string> = {
+  exato: "Preço exato",
+  a_partir_de: "A partir de",
+  sob_consulta: "Sob consulta",
+};
+
+/** Texto do preço na vitrine. */
+export function priceLabel(price: number | string, mode: PriceMode) {
+  if (mode === "sob_consulta") return "Sob consulta";
+  return mode === "a_partir_de" ? `a partir de ${money(price)}` : money(price);
 }

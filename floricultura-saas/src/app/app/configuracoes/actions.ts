@@ -72,3 +72,38 @@ export async function saveCategory(fd: FormData) {
   else await supabase.from("supply_categories").insert({ org_id: org.id, name: reqStr(fd, "name") });
   revalidatePath("/app/configuracoes");
 }
+
+export type StorefrontState = { error?: string; ok?: boolean };
+
+export async function updateStorefront(_: StorefrontState, fd: FormData): Promise<StorefrontState> {
+  let ctx;
+  try {
+    ctx = await requireAdmin();
+  } catch {
+    return { error: "Somente administradores podem alterar a vitrine." };
+  }
+  const slug = (str(fd, "slug") ?? "").toLowerCase();
+  if (!/^[a-z0-9-]{3,40}$/.test(slug)) return { error: "O endereço deve ter de 3 a 40 letras minúsculas, números ou hífen." };
+  const clean = (u: string | null) => (u && /^https:\/\//.test(u) ? u : null);
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from("organizations")
+    .update({
+      storefront_enabled: bool(fd, "storefront_enabled"),
+      slug,
+      tagline: str(fd, "tagline"),
+      store_description: str(fd, "store_description"),
+      whatsapp: str(fd, "whatsapp"),
+      instagram: str(fd, "instagram")?.replace(/^@/, "") ?? null,
+      opening_hours: str(fd, "opening_hours"),
+      delivery_area: str(fd, "delivery_area"),
+      logo_url: clean(str(fd, "logo_url")),
+      cover_url: clean(str(fd, "cover_url")),
+    })
+    .eq("id", ctx.org.id);
+  if (error) return { error: error.code === "23505" ? "Esse endereço já está em uso por outra floricultura." : "Não foi possível salvar." };
+  revalidatePath("/app", "layout");
+  revalidatePath(`/loja/${ctx.org.slug}`, "layout");
+  revalidatePath(`/loja/${slug}`, "layout");
+  return { ok: true };
+}
